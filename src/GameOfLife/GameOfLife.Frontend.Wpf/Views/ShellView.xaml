@@ -5,10 +5,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mvvm="http://prismlibrary.com/"
+    xmlns:viewModels="clr-namespace:GameOfLife.Frontend.Wpf.ViewModels"
+    xmlns:views="clr-namespace:GameOfLife.Frontend.Wpf.Views"
     Title="ShellView"
     Width="300"
     Height="300"
+    d:DataContext="{d:DesignInstance viewModels:ShellViewModel}"
     mvvm:ViewModelLocator.AutoWireViewModel="True"
     mc:Ignorable="d">
-    <TextBlock Text="{Binding}" />
+    <views:GameSetupView />
 </Window>

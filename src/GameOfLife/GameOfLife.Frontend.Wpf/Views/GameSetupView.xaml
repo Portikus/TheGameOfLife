@@ -1,0 +1,73 @@
+﻿<UserControl
+    x:Class="GameOfLife.Frontend.Wpf.Views.GameSetupView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:GameOfLife.Frontend.Wpf.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mvvm="http://prismlibrary.com/"
+    xmlns:viewModels="clr-namespace:GameOfLife.Frontend.Wpf.ViewModels"
+    d:DataContext="{d:DesignInstance viewModels:GameSetupViewModel}"
+    d:DesignHeight="300"
+    d:DesignWidth="300"
+    mvvm:ViewModelLocator.AutoWireViewModel="True"
+    mc:Ignorable="d">
+    <DockPanel>
+        <Grid DockPanel.Dock="Bottom">
+            <Button HorizontalAlignment="Right" Content="Start Game" />
+        </Grid>
+        <DockPanel DockPanel.Dock="Left">
+            <TextBlock DockPanel.Dock="Top">Players</TextBlock>
+            <ListView DockPanel.Dock="Bottom" ItemsSource="{Binding Players}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextBox Text="{Binding Name}" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </DockPanel>
+        <DockPanel>
+            <Grid
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                DataContext="{Binding GameConfiguration}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Text="Width: " />
+                <TextBox
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Width="20"
+                    Text="{Binding MapWidth}" />
+                <TextBlock
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Text="Height: " />
+                <TextBox
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Width="20"
+                    Text="{Binding MapHeight}" />
+                <TextBlock
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Text="Generations per round: " />
+                <TextBox
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Width="20"
+                    Text="{Binding GenerationsPerRound}" />
+            </Grid>
+        </DockPanel>
+    </DockPanel>
+</UserControl>
