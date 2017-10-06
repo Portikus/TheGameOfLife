@@ -16,8 +16,8 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
 
         public ObservableCollection<Player> Players { get; set; }
         public GameConfiguration GameConfiguration { get; set; }
-        public ICommand StartGameCommand { get; set; }
-        public ICommand AddPlayerCommand { get; set; }
+        public ICommand StartGameCommand { get { return _startGameCommand; } }
+        public ICommand AddPlayerCommand { get { return _addPlayerCommand; } }
 
         public GameSetupViewModel(IGameManager gameManager)
         {
@@ -27,9 +27,7 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
             GameConfiguration = new GameConfiguration();
 
             _startGameCommand = new DelegateCommand(StartGameCommandExecuteMethod, StartGameCommandCanExecuteMethod);
-            StartGameCommand = _startGameCommand;
             _addPlayerCommand = new DelegateCommand(AddNewPlayerCommandExecute);
-            AddPlayerCommand = _addPlayerCommand;
         }
 
         private void AddNewPlayerCommandExecute()

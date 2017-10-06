@@ -34,8 +34,9 @@
             </ListView>
             <Button
                 VerticalAlignment="Top"
+                Command="{Binding AddPlayerCommand}"
                 Content="+"
-                DockPanel.Dock="Top" Command="{Binding AddPlayerCommand}"/>
+                DockPanel.Dock="Top" />
         </DockPanel>
         <DockPanel>
             <Grid
