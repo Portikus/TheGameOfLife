@@ -6,6 +6,7 @@ namespace GameOfLife.Api
 {
     public interface IGameManager
     {
+        GameMap GameMap { get; }
         event EventHandler<GameFinishedEventArgs> GameFinished;
         GameMap GenerateGameMap(GameConfiguration gameConfiguration);
         void Start();
