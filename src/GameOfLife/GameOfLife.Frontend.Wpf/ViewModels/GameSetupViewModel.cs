@@ -10,7 +10,14 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
 {
     public class GameSetupViewModel : BindableBase
     {
+        private readonly DelegateCommand _addPlayerCommand;
         private readonly IGameManager _gameManager;
+        private readonly DelegateCommand _startGameCommand;
+
+        public ObservableCollection<Player> Players { get; set; }
+        public GameConfiguration GameConfiguration { get; set; }
+        public ICommand StartGameCommand { get; set; }
+        public ICommand AddPlayerCommand { get; set; }
 
         public GameSetupViewModel(IGameManager gameManager)
         {
@@ -19,12 +26,17 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
             Players = new ObservableCollection<Player>();
             GameConfiguration = new GameConfiguration();
 
-            StartGameCommand = new DelegateCommand(StartGameCommandExecuteMethod, StartGameCommandCanExecuteMethod);
+            _startGameCommand = new DelegateCommand(StartGameCommandExecuteMethod, StartGameCommandCanExecuteMethod);
+            StartGameCommand = _startGameCommand;
+            _addPlayerCommand = new DelegateCommand(AddNewPlayerCommandExecute);
+            AddPlayerCommand = _addPlayerCommand;
         }
 
-        public ObservableCollection<Player> Players { get; set; }
-        public GameConfiguration GameConfiguration { get; set; }
-        public ICommand StartGameCommand { get; set; }
+        private void AddNewPlayerCommandExecute()
+        {
+            Players.Add(new Player {Name = $"Player{Players.Count}"});
+            _startGameCommand.RaiseCanExecuteChanged();
+        }
 
         private bool StartGameCommandCanExecuteMethod()
         {
