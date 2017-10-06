@@ -12,11 +12,13 @@ namespace GameOfLife.Frontend.Wpf.Mocks
             Round = 0;
         }
 
+        public GameMap GameMap { get; private set; }
         public int Round { get; }
         public event EventHandler<GameFinishedEventArgs> GameFinished;
 
         public GameMap GenerateGameMap(GameConfiguration gameConfiguration)
         {
+            GameMap = new GameMap();
             return new GameMap();
         }
 

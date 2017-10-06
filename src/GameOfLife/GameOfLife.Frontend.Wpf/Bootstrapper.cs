@@ -1,8 +1,6 @@
 ﻿using System.Windows;
 using Autofac;
-using GameOfLife.Api;
 using GameOfLife.Frontend.Wpf.Mocks;
-using GameOfLife.Frontend.Wpf.ViewModels;
 using GameOfLife.Frontend.Wpf.Views;
 using Prism.Autofac;
 
@@ -18,7 +16,7 @@ namespace GameOfLife.Frontend.Wpf
 
         protected override DependencyObject CreateShell()
         {
-            var shell = new ShellView ();
+            var shell = new ShellView();
             shell.Show();
             return shell;
         }
