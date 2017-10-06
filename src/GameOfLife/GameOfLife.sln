@@ -3,7 +3,31 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameOfLife.Api", "GameOfLife.Api\GameOfLife.Api.csproj", "{DE4066F4-6796-4E4B-984D-B51894566BF7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameOfLife.Frontend.Wpf", "GameOfLife.Frontend.Wpf\GameOfLife.Frontend.Wpf.csproj", "{3058512B-CEB8-41E7-B240-037A5DC0FA81}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameOfLife.Backend", "GameOfLife.Backend\GameOfLife.Backend.csproj", "{71D80F2C-8740-4FF2-B8C2-DD79F3FB9704}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DE4066F4-6796-4E4B-984D-B51894566BF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE4066F4-6796-4E4B-984D-B51894566BF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE4066F4-6796-4E4B-984D-B51894566BF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE4066F4-6796-4E4B-984D-B51894566BF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3058512B-CEB8-41E7-B240-037A5DC0FA81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3058512B-CEB8-41E7-B240-037A5DC0FA81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3058512B-CEB8-41E7-B240-037A5DC0FA81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3058512B-CEB8-41E7-B240-037A5DC0FA81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71D80F2C-8740-4FF2-B8C2-DD79F3FB9704}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71D80F2C-8740-4FF2-B8C2-DD79F3FB9704}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71D80F2C-8740-4FF2-B8C2-DD79F3FB9704}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71D80F2C-8740-4FF2-B8C2-DD79F3FB9704}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
