@@ -3,6 +3,7 @@ using Autofac;
 using GameOfLife.Frontend.Wpf.Mocks;
 using GameOfLife.Frontend.Wpf.Views;
 using Prism.Autofac;
+using Prism.Events;
 
 namespace GameOfLife.Frontend.Wpf
 {
@@ -12,6 +13,7 @@ namespace GameOfLife.Frontend.Wpf
         {
             base.ConfigureContainerBuilder(builder);
             builder.RegisterType<GameManagerMock>().AsImplementedInterfaces();
+            builder.RegisterType<EventAggregator>().AsImplementedInterfaces().SingleInstance();
         }
 
         protected override DependencyObject CreateShell()

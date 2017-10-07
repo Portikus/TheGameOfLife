@@ -7,11 +7,32 @@
     xmlns:mvvm="http://prismlibrary.com/"
     xmlns:viewModels="clr-namespace:GameOfLife.Frontend.Wpf.ViewModels"
     xmlns:views="clr-namespace:GameOfLife.Frontend.Wpf.Views"
+    xmlns:wpf="clr-namespace:GameOfLife.Frontend.Wpf"
+    Name="ShellViewView"
     Title="ShellView"
-    Width="300"
-    Height="300"
+    Width="800"
+    Height="600"
     d:DataContext="{d:DesignInstance viewModels:ShellViewModel}"
     mvvm:ViewModelLocator.AutoWireViewModel="True"
     mc:Ignorable="d">
-    <views:GameSetupView />
+    <Grid>
+        <views:GameMapView DataContext="{Binding GameMapViewModel}">
+            <views:GameMapView.Visibility>
+                <Binding ElementName="ShellViewView" Path="DataContext.GameStarted">
+                    <Binding.Converter>
+                        <wpf:BoolToVisibleConverter />
+                    </Binding.Converter>
+                </Binding>
+            </views:GameMapView.Visibility>
+        </views:GameMapView>
+        <views:GameSetupView DataContext="{Binding GameSetupViewModel}">
+            <views:GameSetupView.Visibility>
+                <Binding ElementName="ShellViewView" Path="DataContext.GameStarted">
+                    <Binding.Converter>
+                        <wpf:BoolToHiddenConverter />
+                    </Binding.Converter>
+                </Binding>
+            </views:GameSetupView.Visibility>
+        </views:GameSetupView>
+    </Grid>
 </Window>

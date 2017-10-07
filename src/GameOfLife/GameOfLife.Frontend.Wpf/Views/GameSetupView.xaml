@@ -10,11 +10,11 @@
     d:DataContext="{d:DesignInstance viewModels:GameSetupViewModel}"
     d:DesignHeight="300"
     d:DesignWidth="300"
-    mvvm:ViewModelLocator.AutoWireViewModel="True"
     mc:Ignorable="d">
     <DockPanel Margin="10">
         <Grid DockPanel.Dock="Bottom">
             <Button
+                Padding="5"
                 HorizontalAlignment="Right"
                 Command="{Binding StartGameCommand}"
                 Content="Start Game" />
