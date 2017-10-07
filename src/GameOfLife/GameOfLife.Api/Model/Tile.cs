@@ -16,7 +16,6 @@ namespace GameOfLife.Api.Model
                 RaisePropertyChanged();
             }
         }
-        public Entity Entity { get; set; }
 
         public bool IsAlive => Entity != null;
 
