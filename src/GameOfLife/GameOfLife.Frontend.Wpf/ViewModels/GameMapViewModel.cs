@@ -25,13 +25,21 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
             _playerProvider = playerProvider;
 
             GameMap = new ObservableCollection<ObservableCollection<Tile>>();
-            _tileSelectedCommand = new DelegateCommand<Tile>(TileSelectedCommandExecuted, t => !gameManager.Started);
+            _tileSelectedCommand = new DelegateCommand<Tile>(TileSelectedCommandExecuted);
             eventAggregator.GetEvent<GameStartedEvent>().Subscribe(OnGameStarted);
         }
 
         private void TileSelectedCommandExecuted(Tile tile)
         {
-            tile.Entity = tile.IsAlive ? null : new Entity {Owner = _playerProvider.CurrentPlayer};
+            if (_gameManager.Started)
+            {
+                tile.Temperature.Value += tile.Temperature.Step;
+            }
+            else
+            {
+                tile.Entity = tile.IsAlive ? null : new Entity { Owner = _playerProvider.CurrentPlayer };
+            }
+
         }
 
         private void OnGameStarted()

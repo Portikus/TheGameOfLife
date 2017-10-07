@@ -36,7 +36,8 @@
                                 Height="15"
                                 BorderBrush="Black"
                                 Command="{Binding ElementName=GameMapViewControl, Path=DataContext.TileSelectedCommand}"
-                                CommandParameter="{Binding}">
+                                CommandParameter="{Binding}"
+                                Content="{Binding DebugHighlight}">
                                 <Button.BorderThickness>
                                     <MultiBinding  Converter="{StaticResource NeighborConverter}">
                                         <Binding Path="Entity" />
