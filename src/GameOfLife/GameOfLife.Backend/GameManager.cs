@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using GameOfLife.Api.Model;
@@ -282,15 +283,15 @@ namespace GameOfLife.Backend
         {
             var result = new List<HotSpot>();
             int tileCount = width * height;
-            int hotSpotCount = _random.Next(tileCount / 1000, tileCount / 200);
+            int hotSpotCount = 30;//_random.Next(tileCount / 1000, tileCount / 200);
             for (int i = 0; i < hotSpotCount; i++)
             {
                 result.Add(new HotSpot()
                 {
                     X = _random.Next(0, width),
                     Y = _random.Next(0, height),
-                    Temperature = _random.Next(Temperature.MinTemperature, Temperature.MaxTemperature),
-                    FallOffDistance = 4
+                    Temperature = _random.NextDouble() > 0.5d ? Temperature.MinTemperature : Temperature.MaxTemperature,
+                    FalloffStep = 1.5d
                 });
             }
             return result;
@@ -299,29 +300,29 @@ namespace GameOfLife.Backend
 
         private double CalculateTemperature(int x, int y)
         {
-            return _hotSpots.Select(h => CalculateTemperatureForHotSpot(x, y, h)).Average();
+            return _hotSpots.Select(h => CalculateTemperatureForHotSpot(x, y, h)).Select(v => v - Temperature.MedianTemperature).Where(v => Math.Abs(v) > 0.1).ToList().Sum() + Temperature.MedianTemperature;
         }
         
         private double CalculateTemperatureForHotSpot(int x, int y, HotSpot spot)
         {
             if (spot.Temperature > 0)
             {
-                return Clamp(spot.Temperature - (spot.Temperature / spot.FallOffDistance *
-                                                 CalculatePytagoras(spot.X - x, spot.Y - y)), 0,
+                return Clamp(spot.Temperature - spot.FalloffStep *
+                                                 CalculatePytagoras(spot.X - x, spot.Y - y), Temperature.MedianTemperature,
                     Temperature.MaxTemperature);
 
             }
             else
             {
-                return Clamp(spot.Temperature - (spot.Temperature / spot.FallOffDistance *
-                                                 CalculatePytagoras(spot.X - x, spot.Y - y)),
-                    Temperature.MinTemperature,0);
+                return Clamp(spot.Temperature + spot.FalloffStep *
+                                                 CalculatePytagoras(spot.X - x, spot.Y - y) ,
+                    Temperature.MinTemperature,Temperature.MedianTemperature);
             }
         }
 
         private double Clamp(double value, double min, double max)
         {
-            return value > min ? value < max ? value : min : max;
+            return value > min ? value < max ? value : max : min;
         }
 
         private double CalculatePytagoras(int x, int y)
@@ -334,7 +335,17 @@ namespace GameOfLife.Backend
             public int X { get; set; }
             public int Y { get; set; }
             public int Temperature { get; set; }
-            public int FallOffDistance { get; set; }
+            public double FalloffStep { get; set; }
+        }
+
+        private double CalculateHeatResistance(Tile tile)
+        {
+            if (!tile.IsAlive) throw new ArgumentException();
+            if (tile.Temperature.Value <= tile.Entity.IdealTemperature)
+                return Clamp(
+                    tile.Entity.Resitance * (tile.Temperature.Value - tile.Entity.IdealTemperature) +
+                    tile.Entity.Efficiency, 0, tile.Entity.Efficiency);
+            return 0;//Clamp(-tile.Entity.tile.Entity.IdealTemperature)
         }
 
         protected virtual void RaiseGameFinishedEvent(GameFinishedEventArgs e)
