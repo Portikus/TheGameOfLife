@@ -46,7 +46,7 @@ namespace GameOfLife.Backend
             get { return _started; }
             private set
             {
-                _started = value; 
+                _started = value;
                 RaisePropertyChanged();
             }
         }
@@ -135,7 +135,22 @@ namespace GameOfLife.Backend
             {
                 for (int k = 0; k < newGameMap.Tiles[j].Length; k++)
                 {
-                    GameMap.Tiles[j][k].Entity = newGameMap.Tiles[j][k].Entity;
+                    var tile = newGameMap.Tiles[j][k];
+                    if (tile.IsAlive)
+                    {
+                        var topTile = newGameMap.Tiles[j][WrapIntToBounds(k - 1, newGameMap.Tiles[j].Length)];
+                        var southTile = newGameMap.Tiles[j][WrapIntToBounds(k + 1, newGameMap.Tiles[j].Length)];
+                        var eastTile = newGameMap.Tiles[WrapIntToBounds(j + 1, newGameMap.Tiles.Length)][k];
+                        var westTile = newGameMap.Tiles[WrapIntToBounds(j - 1, newGameMap.Tiles.Length)][k];
+
+                        var entity = newGameMap.Tiles[j][k].Entity;
+                        entity.NeighborInfo.HasNorthNeighbor = topTile.IsAlive && topTile.Entity.Owner == entity.Owner;
+                        entity.NeighborInfo.HasSouthNeighbor = southTile.IsAlive && southTile.Entity.Owner == entity.Owner;
+                        entity.NeighborInfo.HasEastNeighbor = eastTile.IsAlive && eastTile.Entity.Owner == entity.Owner;
+                        entity.NeighborInfo.HasWestNeighbor = westTile.IsAlive && westTile.Entity.Owner == entity.Owner;
+                    }
+
+                    GameMap.Tiles[j][k].Entity = tile.Entity;
                 }
             }
             Generations++;
