@@ -16,7 +16,7 @@
     mvvm:ViewModelLocator.AutoWireViewModel="True"
     mc:Ignorable="d">
     <Grid>
-        <!--<views:GameView DataContext="{Binding GameViewModel}">
+        <views:GameView DataContext="{Binding GameViewModel}">
             <views:GameView.Visibility>
                 <Binding ElementName="ShellViewView" Path="DataContext.GameStarted">
                     <Binding.Converter>
@@ -33,12 +33,12 @@
                     </Binding.Converter>
                 </Binding>
             </views:GameSetupView.Visibility>
-        </views:GameSetupView>-->
-        <views:LobbyView>
+        </views:GameSetupView>
+        <!--<views:LobbyView>
             <views:LobbyView.DataContext>
                 <viewModels:LobbyViewModel />
             </views:LobbyView.DataContext>
-        </views:LobbyView>
+        </views:LobbyView>-->
     </Grid>
 </Window>
 

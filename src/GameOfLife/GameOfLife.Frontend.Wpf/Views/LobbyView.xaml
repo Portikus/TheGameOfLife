@@ -12,6 +12,11 @@
     mc:Ignorable="d">
     <DockPanel>
         <TextBox DockPanel.Dock="Top" Text="{Binding PlayerName}" />
+        <TextBox DockPanel.Dock="Top" Text="{Binding LocalAddress}" />
+        <Button
+            Command="{Binding StartCommand}"
+            Content="Start"
+            DockPanel.Dock="Top" />
         <Label Content="{Binding Status}" DockPanel.Dock="Bottom" />
         <ListView ItemsSource="{Binding LobbyPlayer}" />
     </DockPanel>

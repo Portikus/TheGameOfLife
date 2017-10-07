@@ -5,14 +5,21 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Data;
+using System.Windows.Input;
 using System.Xml.Serialization;
+using Prism.Commands;
 using Prism.Mvvm;
 
 namespace GameOfLife.Frontend.Wpf.ViewModels
 {
     public class LobbyViewModel : BindableBase
     {
+        private readonly DelegateCommand _delegateCommand;
+        private UdpClient _receiverUdpClient;
+        private UdpClient _senderUdpClient;
         private string _status;
+        public string LocalAddress { get; set; }
         public ObservableCollection<string> LobbyPlayer { get; set; }
 
         public string Status
@@ -27,9 +34,20 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
 
         public string PlayerName { get; set; }
 
+        public ICommand StartCommand => _delegateCommand;
+
         public LobbyViewModel()
         {
+            _delegateCommand = new DelegateCommand(StartCommandExecute);
             LobbyPlayer = new ObservableCollection<string>();
+            BindingOperations.EnableCollectionSynchronization(LobbyPlayer, this);
+            LocalAddress = "192.168.80.198";
+        }
+
+        private void StartCommandExecute()
+        {
+            _receiverUdpClient = new UdpClient(new IPEndPoint(IPAddress.Parse(LocalAddress), 10000));
+            _senderUdpClient = new UdpClient();
             Task.Run(ReceiveHeartBeatsAsync);
             Task.Run(SendHeartBeats);
         }
@@ -38,7 +56,6 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
         {
             try
             {
-                var udpClient = new UdpClient();
                 while (true)
                 {
                     await Task.Delay(1000);
@@ -54,7 +71,10 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                         xmlSerializer.Serialize(textWriter, heartBeat);
                         var txt = textWriter.ToString();
                         var toBytes = Encoding.UTF8.GetBytes(txt);
-                        await udpClient.SendAsync(toBytes, toBytes.Length, new IPEndPoint(new IPAddress(new byte[] {192, 168, 80, 255}), 10000));
+                        for (byte i = 1; i < 255; i++)
+                        {
+                            await _senderUdpClient.SendAsync(toBytes, toBytes.Length, new IPEndPoint(new IPAddress(new byte[] { 192, 168, 80, i }), 10000));
+                        }
                     }
                 }
             }
@@ -68,12 +88,11 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
         {
             try
             {
-                var udpClient = new UdpClient(10000);
-                udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                //udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                 //udpClient.ExclusiveAddressUse = false; // only if you want to send/receive on same machine.
                 while (true)
                 {
-                    var data = await udpClient.ReceiveAsync();
+                    var data = await _receiverUdpClient.ReceiveAsync();
                     var str = Encoding.UTF8.GetString(data.Buffer);
                     var serializer = new XmlSerializer(typeof(HeartBeat));
                     HeartBeat result;
@@ -86,9 +105,9 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                         Status = "Fehler";
                         continue;
                     }
-                    if (LobbyPlayer.Contains(result.PlayerName))
+                    if (LobbyPlayer.Contains(result.PlayerName) == false)
                     {
-                        LobbyPlayer.Add(result.PlayerName);
+                        LobbyPlayer.Add(result.PlayerName + data.RemoteEndPoint.Address);
                     }
                 }
             }
