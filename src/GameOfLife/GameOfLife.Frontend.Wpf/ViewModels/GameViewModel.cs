@@ -47,7 +47,7 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                 if (PlayerProvider.CurrentPlayer == PlayerProvider.Players.Last())
                 {
                     GameManager.Start();
-                    GameManager.GenerationDone += async (sender, args) => { await Task.Delay(200); };
+                    GameManager.GenerationDone += async (sender, args) => { await Task.Delay(100); };
                 }
             }
             GeneratePlayerActions();

@@ -82,7 +82,7 @@
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Mocks\GameManagerMock.cs" />
     <Compile Include="Model\PlayerProvider.cs" />
-    <Compile Include="PlayerNameToColorConverter.cs" />
+    <Compile Include="NeighborConverter.cs" />
     <Compile Include="TileToColorConverter.cs" />
     <Compile Include="ViewModels\GameMapViewModel.cs" />
     <Compile Include="ViewModels\GameViewModel.cs" />

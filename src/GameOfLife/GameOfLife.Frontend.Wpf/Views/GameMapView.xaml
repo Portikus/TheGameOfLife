@@ -12,13 +12,13 @@
     d:DesignWidth="300"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <wpf:PlayerNameToColorConverter x:Key="PlayerNameToColorConverter" />
+        <wpf:NeighborConverter x:Key="NeighborConverter" />
         <wpf:TileToColorConverter x:Key="TileToColorConverter" />
     </UserControl.Resources>
     <ItemsControl ItemsSource="{Binding GameMap}">
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
-                <StackPanel Orientation="Vertical" />
+                <StackPanel Orientation="Horizontal" />
             </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
         <ItemsControl.ItemTemplate>
@@ -26,7 +26,7 @@
                 <ItemsControl ItemsSource="{Binding}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" />
+                            <StackPanel Orientation="Vertical" />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
@@ -34,9 +34,14 @@
                             <Button
                                 Width="15"
                                 Height="15"
-                                BorderThickness="0"
+                                BorderBrush="Black"
                                 Command="{Binding ElementName=GameMapViewControl, Path=DataContext.TileSelectedCommand}"
                                 CommandParameter="{Binding}">
+                                <Button.BorderThickness>
+                                    <MultiBinding  Converter="{StaticResource NeighborConverter}">
+                                        <Binding Path="Entity" />
+                                    </MultiBinding>
+                                </Button.BorderThickness>
                                 <Button.Background>
                                     <MultiBinding Converter="{StaticResource TileToColorConverter}">
                                         <Binding Path="Entity" />
