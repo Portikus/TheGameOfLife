@@ -7,12 +7,15 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mvvm="http://prismlibrary.com/"
     xmlns:viewModels="clr-namespace:GameOfLife.Frontend.Wpf.ViewModels"
+    xmlns:wpf="clr-namespace:GameOfLife.Frontend.Wpf"
     x:Name="GameMapViewControl"
     d:DataContext="{d:DesignInstance viewModels:GameMapViewModel}"
     d:DesignHeight="300"
     d:DesignWidth="300"
-    mvvm:ViewModelLocator.AutoWireViewModel="True"
     mc:Ignorable="d">
+    <UserControl.Resources>
+        <wpf:PlayerNameToColorConverter x:Key="PlayerNameToColorConverter" />
+    </UserControl.Resources>
     <ItemsControl ItemsSource="{Binding GameMap}">
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
@@ -33,6 +36,7 @@
                                 Width="20"
                                 Height="20"
                                 Margin="2"
+                                Background="{Binding Entity, Converter={StaticResource PlayerNameToColorConverter},FallbackValue=Gray}"
                                 Command="{Binding ElementName=GameMapViewControl, Path=DataContext.TileSelectedCommand}"
                                 CommandParameter="{Binding}" />
                         </DataTemplate>

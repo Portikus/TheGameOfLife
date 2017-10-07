@@ -2,9 +2,19 @@
 
 namespace GameOfLife.Api.Model
 {
-    public class Entity
+    public class Entity : ModelBase
     {
-        public IDictionary<EntityAttribute,int> EntityAttributes { get; set; }
-        public Player Owner { get; set; }
+        private Player _owner;
+        public IDictionary<EntityAttribute, int> EntityAttributes { get; set; }
+
+        public Player Owner
+        {
+            get => _owner;
+            set
+            {
+                _owner = value;
+                RaisePropertyChanged();
+            }
+        }
     }
 }

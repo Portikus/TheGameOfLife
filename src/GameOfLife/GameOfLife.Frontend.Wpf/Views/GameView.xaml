@@ -18,6 +18,6 @@
                 Content="End round" />
             <Label VerticalAlignment="Top" Content="{Binding PlayerProvider.CurrentPlayer.Name}" />
         </DockPanel>
-        <local:GameMapView />
+        <local:GameMapView DataContext="{Binding GameMapViewModel}"/>
     </DockPanel>
 </UserControl>

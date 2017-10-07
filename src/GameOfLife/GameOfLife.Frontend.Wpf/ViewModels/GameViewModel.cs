@@ -19,10 +19,13 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
 
         public ICommand EndTurnCommand => _endTurnCommand;
 
-        public GameViewModel(IGameManager gameManager, PlayerProvider playerProvider, IEventAggregator eventAggregator)
+        public GameMapViewModel GameMapViewModel { get; }
+
+        public GameViewModel(IGameManager gameManager, PlayerProvider playerProvider, IEventAggregator eventAggregator, GameMapViewModel gameMapViewModel)
         {
             _gameManager = gameManager;
             PlayerProvider = playerProvider;
+            GameMapViewModel = gameMapViewModel;
             _endTurnCommand = new DelegateCommand(EndTurnExecuteMethod);
 
             eventAggregator.GetEvent<GameStartedEvent>().Subscribe(OnGameStarted);
@@ -38,6 +41,7 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
             if (_gameStarted == false)
             {
                 GenerateInitialPlayerSetup();
+                RemoveInitialSetup();
                 if (PlayerProvider.CurrentPlayer == PlayerProvider.Players.Last())
                 {
                     _gameManager.Start();
@@ -46,6 +50,18 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
             }
             GeneratePlayerActions();
             SelectNextPlayer();
+        }
+
+        private void RemoveInitialSetup()
+        {
+            var gameMap = _gameManager.GameMap;
+            for (var i = 0; i < gameMap.Tiles.Length; i++)
+            {
+                for (var j = 0; j < gameMap.Tiles[i].Length; j++)
+                {
+                    gameMap.Tiles[i][j].Entity = null;
+                }
+            }
         }
 
         private void SelectNextPlayer()
