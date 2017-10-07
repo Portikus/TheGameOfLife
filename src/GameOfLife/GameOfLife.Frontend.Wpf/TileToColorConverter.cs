@@ -29,13 +29,13 @@ namespace GameOfLife.Frontend.Wpf
         {
             var red = temperature.Value <= temperature.MedianValue ? 0 : byte.MaxValue;
             var blue = temperature.Value >= temperature.MedianValue ? 0 : byte.MaxValue;
-            
+
             var medianBorderDifference = Math.Abs(temperature.Minimum - temperature.MedianValue);
             var valueMedianDifference = temperature.Value < 0
-                ? Math.Abs(Math.Abs(temperature.MedianValue) + (Math.Abs(temperature.Value)))
-                : Math.Abs(Math.Abs(temperature.MedianValue) - (Math.Abs(temperature.Value)));
+                ? Math.Abs(Math.Abs(temperature.MedianValue) + Math.Abs(temperature.Value))
+                : Math.Abs(Math.Abs(temperature.MedianValue) - Math.Abs(temperature.Value));
 
-            var factor =  valueMedianDifference / medianBorderDifference;
+            var factor = valueMedianDifference / medianBorderDifference;
             var alpha = factor * byte.MaxValue;
 
             return new SolidColorBrush(new Color
@@ -54,7 +54,7 @@ namespace GameOfLife.Frontend.Wpf
             var r = (byte) int.Parse(hash.Substring(0, 2));
             var g = (byte) int.Parse(hash.Substring(2, 4));
             var b = (byte) int.Parse(hash.Substring(4, 6));
-            return new SolidColorBrush(new Color {R = r, G = g, B = b, A = byte.MaxValue});
+            return new SolidColorBrush(new Color {R = r, G = g, B = b, A = byte.MaxValue / 2});
         }
     }
 }
