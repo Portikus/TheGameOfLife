@@ -79,6 +79,11 @@ namespace GameOfLife.Backend
                     GameMap.Tiles[i][j].Temperature.Value = CalculateTemperature(i, j);
                 }
             }
+            foreach (var hotSpot in _hotSpots)
+            {
+                GameMap.Tiles[hotSpot.X][hotSpot.Y].DebugHighlight = true;
+            }
+
             GenerationPerRound = gameConfiguration.GenerationsPerRound;
             return GameMap;
         }
