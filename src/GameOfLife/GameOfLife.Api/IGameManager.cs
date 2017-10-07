@@ -8,7 +8,10 @@ namespace GameOfLife.Api
     {
         GameMap GameMap { get; }
         int Round { get;}
+        int Started { get; }
         event EventHandler<GameFinishedEventArgs> GameFinished;
+        event EventHandler<GenerationDoneEventArgs> GenerationDone;
+        event EventHandler<RoundDoneEventArgs> RoundDone;
         GameMap GenerateGameMap(GameConfiguration gameConfiguration);
         void Start();
         void AddPlayer(PlayerConfiguration configuration);
