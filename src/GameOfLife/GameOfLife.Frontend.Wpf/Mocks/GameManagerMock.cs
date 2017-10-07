@@ -18,7 +18,15 @@ namespace GameOfLife.Frontend.Wpf.Mocks
 
         public GameMap GenerateGameMap(GameConfiguration gameConfiguration)
         {
-            GameMap = new GameMap();
+            GameMap = new GameMap {Tiles = new Tile[gameConfiguration.MapHeight][]};
+            for (var i = 0; i < GameMap.Tiles.Length; i++)
+            {
+                GameMap.Tiles[i] = new Tile[gameConfiguration.MapWidth];
+                for (var j = 0; j < GameMap.Tiles[i].Length; j++)
+                {
+                    GameMap.Tiles[i][j] = new Tile();
+                }
+            }
             return new GameMap();
         }
 

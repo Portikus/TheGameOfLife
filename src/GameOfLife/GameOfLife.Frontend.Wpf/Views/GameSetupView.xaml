@@ -10,21 +10,33 @@
     d:DataContext="{d:DesignInstance viewModels:GameSetupViewModel}"
     d:DesignHeight="300"
     d:DesignWidth="300"
-    mvvm:ViewModelLocator.AutoWireViewModel="True"
     mc:Ignorable="d">
-    <DockPanel>
+    <DockPanel Margin="10">
         <Grid DockPanel.Dock="Bottom">
-            <Button HorizontalAlignment="Right" Content="Start Game" />
+            <Button
+                Padding="5"
+                HorizontalAlignment="Right"
+                Command="{Binding StartGameCommand}"
+                Content="Start Game" />
         </Grid>
         <DockPanel DockPanel.Dock="Left">
             <TextBlock DockPanel.Dock="Top">Players</TextBlock>
-            <ListView DockPanel.Dock="Bottom" ItemsSource="{Binding Players}">
+            <ListView
+                VerticalAlignment="Top"
+                BorderThickness="0"
+                DockPanel.Dock="Top"
+                ItemsSource="{Binding Players}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <TextBox Text="{Binding Name}" />
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+            <Button
+                VerticalAlignment="Top"
+                Command="{Binding AddPlayerCommand}"
+                Content="+"
+                DockPanel.Dock="Top" />
         </DockPanel>
         <DockPanel>
             <Grid
