@@ -7,7 +7,8 @@ namespace GameOfLife.Api
     public interface IGameManager
     {
         GameMap GameMap { get; }
-        int Round { get;}
+        int Round { get; }
+        int Generations { get; }
         int Started { get; }
         event EventHandler<GameFinishedEventArgs> GameFinished;
         event EventHandler<GenerationDoneEventArgs> GenerationDone;
