@@ -141,7 +141,22 @@ namespace GameOfLife.Backend
             {
                 for (int k = 0; k < newGameMap.Tiles[j].Length; k++)
                 {
-                    GameMap.Tiles[j][k].Entity = newGameMap.Tiles[j][k].Entity;
+                    var tile = newGameMap.Tiles[j][k];
+                    if (tile.IsAlive)
+                    {
+                        var topTile = newGameMap.Tiles[j][WrapIntToBounds(k - 1, newGameMap.Tiles[j].Length)];
+                        var southTile = newGameMap.Tiles[j][WrapIntToBounds(k + 1, newGameMap.Tiles[j].Length)];
+                        var eastTile = newGameMap.Tiles[WrapIntToBounds(j + 1, newGameMap.Tiles.Length)][k];
+                        var westTile = newGameMap.Tiles[WrapIntToBounds(j - 1, newGameMap.Tiles.Length)][k];
+
+                        var entity = newGameMap.Tiles[j][k].Entity;
+                        entity.NeighborInfo.HasNorthNeighbor = topTile.IsAlive && topTile.Entity.Owner == entity.Owner;
+                        entity.NeighborInfo.HasSouthNeighbor = southTile.IsAlive && southTile.Entity.Owner == entity.Owner;
+                        entity.NeighborInfo.HasEastNeighbor = eastTile.IsAlive && eastTile.Entity.Owner == entity.Owner;
+                        entity.NeighborInfo.HasWestNeighbor = westTile.IsAlive && westTile.Entity.Owner == entity.Owner;
+                    }
+
+                    GameMap.Tiles[j][k].Entity = tile.Entity;
                 }
             }
             Generations++;
@@ -259,26 +274,24 @@ namespace GameOfLife.Backend
 
         public void VisualizeGamestate(GameMap map)
         {
-#if DEBUG
-            Debug.WriteLine("===============================================================");
-            Debug.WriteLine("Visualizing Game State");
-            for (int i = 0; i < map.Tiles.Length; i++)
-            {
-                for (int j = 0; j < map.Tiles[i].Length; j++)
-                {
-                    var tile = map.Tiles[j][i];
-                    if (tile.Entity == null)
-                    {
-                        Debug.Write("   ");
-                    }
-                    else
-                    {
-                        Debug.Write($" {tile.Entity.Owner.Name.Substring(0, 1)} ");
-                    }
-                }
-                Debug.WriteLine("");
-            }
-#endif
+            //Debug.WriteLine("===============================================================");
+            //Debug.WriteLine("Visualizing Game State");
+            //for (int i = 0; i < map.Tiles.Length; i++)
+            //{
+            //    for (int j = 0; j < map.Tiles[i].Length; j++)
+            //    {
+            //        var tile = map.Tiles[j][i];
+            //        if (tile.Entity == null)
+            //        {
+            //            Debug.Write("   ");
+            //        }
+            //        else
+            //        {
+            //            Debug.Write($" {tile.Entity.Owner.Name.Substring(0, 1)} ");
+            //        }
+            //    }
+            //    Debug.WriteLine("");
+            //}
         }
 
         private ICollection<HotSpot> GenerateHotSpots(int width, int height)
@@ -304,7 +317,7 @@ namespace GameOfLife.Backend
         {
             return _hotSpots.Select(h => CalculateTemperatureForHotSpot(x, y, h)).Average();
         }
-
+        
         private double CalculateTemperatureForHotSpot(int x, int y, HotSpot spot)
         {
             return spot.Temperature - (spot.Temperature / (_gameMapDiagonal / spot.FallOffFactor) *
@@ -313,7 +326,7 @@ namespace GameOfLife.Backend
 
         private double CalculatePytagoras(int x, int y)
         {
-            return Math.Sqrt(x * x, y * y);
+            return Math.Sqrt(x * x+ y * y);
         }
 
         private class HotSpot
