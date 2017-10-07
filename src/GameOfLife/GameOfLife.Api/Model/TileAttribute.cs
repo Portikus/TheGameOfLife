@@ -1,4 +1,6 @@
-﻿namespace GameOfLife.Api.Model
+﻿using System;
+
+namespace GameOfLife.Api.Model
 {
     public abstract class TileAttribute : ModelBase
     {
@@ -9,7 +11,18 @@
             get { return _value; }
             set
             {
-                _value = value;
+                if (value < Minimum)
+                {
+                    _value = Minimum;
+                }
+                else if (value > Maximum)
+                {
+                    _value = Maximum;
+                }
+                else
+                {
+                    _value = value;
+                }
                 RaisePropertyChanged();
             }
         }
