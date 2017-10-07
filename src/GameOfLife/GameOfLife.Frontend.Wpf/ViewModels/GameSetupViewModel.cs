@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows.Input;
 using GameOfLife.Api;
 using GameOfLife.Api.Model;
@@ -17,8 +15,8 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
     {
         private readonly DelegateCommand _addPlayerCommand;
         private readonly IEventAggregator _eventAggregator;
-        private readonly PlayerProvider _playerProvider;
         private readonly IGameManager _gameManager;
+        private readonly PlayerProvider _playerProvider;
         private readonly DelegateCommand _startGameCommand;
 
         public ObservableCollection<Player> Players { get; set; }
@@ -32,8 +30,14 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
             _playerProvider = playerProvider;
             _gameManager = gameManager ?? throw new ArgumentNullException(nameof(gameManager));
 
-            Players = new ObservableCollection<Player> {new Player {Name = "Jonas"}, new Player {Name = "Florian"}, new Player {Name = "Jannik"}, new Player {Name = "Sebastian"}};
-            GameConfiguration = new GameConfiguration {MapHeight = 20, MapWidth = 20};
+            Players = new ObservableCollection<Player>
+            {
+                new Player {Name = "Jonas"},
+                new Player {Name = "Florian"},
+                //new Player {Name = "Jannik"},
+                //new Player {Name = "Sebastian"}
+            };
+            GameConfiguration = new GameConfiguration {MapHeight = 20, MapWidth = 20, GenerationsPerRound = 1};
 
             _startGameCommand = new DelegateCommand(StartGameCommandExecuteMethod, StartGameCommandCanExecuteMethod);
             _addPlayerCommand = new DelegateCommand(AddNewPlayerCommandExecute);

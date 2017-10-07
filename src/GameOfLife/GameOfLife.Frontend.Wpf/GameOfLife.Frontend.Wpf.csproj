@@ -149,6 +149,10 @@
       <Project>{DE4066F4-6796-4E4B-984D-B51894566BF7}</Project>
       <Name>GameOfLife.Api</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GameOfLife.Backend\GameOfLife.Backend.csproj">
+      <Project>{71D80F2C-8740-4FF2-B8C2-DD79F3FB9704}</Project>
+      <Name>GameOfLife.Backend</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
