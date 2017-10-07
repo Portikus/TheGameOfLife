@@ -34,8 +34,8 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
             {
                 new Player {Name = "Jonas"},
                 new Player {Name = "Florian"},
-                new Player {Name = "Jannik"},
-                new Player {Name = "Sebastian"}
+                //new Player {Name = "Jannik"},
+                //new Player {Name = "Sebastian"}
             };
             GameConfiguration = new GameConfiguration {MapHeight = 20, MapWidth = 20, GenerationsPerRound = 1};
 

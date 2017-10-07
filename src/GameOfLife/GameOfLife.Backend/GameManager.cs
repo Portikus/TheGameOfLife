@@ -95,7 +95,7 @@ namespace GameOfLife.Backend
             {
                 throw new ArgumentException("The amount of playeractions didn't match the amount of players", nameof(playerActions));
             }
-            for (int i = 0; i <t GenerationPerRound; i++)
+            for (int i = 0; i < GenerationPerRound; i++)
             {
                 SimulateGeneration();
             }

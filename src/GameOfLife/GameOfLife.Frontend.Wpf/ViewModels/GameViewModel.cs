@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using GameOfLife.Api;
 using GameOfLife.Api.Model;
@@ -45,6 +47,7 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                 if (PlayerProvider.CurrentPlayer == PlayerProvider.Players.Last())
                 {
                     GameManager.Start();
+                    GameManager.GenerationDone += async (sender, args) => { await Task.Delay(200); };
                 }
             }
             GeneratePlayerActions();
@@ -69,8 +72,11 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
             if (currentPlayerIndex == PlayerProvider.Players.Count - 1)
             {
                 PlayerProvider.CurrentPlayer = PlayerProvider.Players.First();
-                GameManager.SimulateRound(_playerActions);
-                _playerActions.Clear();
+                Task.Run(() =>
+                {
+                    GameManager.SimulateRound(_playerActions);
+                    _playerActions.Clear();
+                });
             }
             else
             {
