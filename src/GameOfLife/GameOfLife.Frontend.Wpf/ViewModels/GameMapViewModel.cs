@@ -31,7 +31,14 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
 
         private void TileSelectedCommandExecuted(Tile tile)
         {
-            tile.Entity = new Entity {Owner = _playerProvider.CurrentPlayer};
+            if (tile.IsAlive)
+            {
+                tile.Entity = null;
+            }
+            else
+            {
+                tile.Entity = new Entity { Owner = _playerProvider.CurrentPlayer };
+            }
         }
 
         private void OnGameStarted()

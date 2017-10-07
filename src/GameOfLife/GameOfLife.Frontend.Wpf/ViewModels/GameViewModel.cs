@@ -14,8 +14,9 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
     {
         private readonly DelegateCommand _endTurnCommand;
         private readonly IGameManager _gameManager;
-        public  PlayerProvider PlayerProvider { get; }
+        private readonly List<PlayerAction> playerActions = new List<PlayerAction>();
         private bool _gameStarted;
+        public PlayerProvider PlayerProvider { get; }
 
         public ICommand EndTurnCommand => _endTurnCommand;
 
@@ -70,6 +71,8 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
             if (currentPlayerIndex == PlayerProvider.Players.Count - 1)
             {
                 PlayerProvider.CurrentPlayer = PlayerProvider.Players.First();
+                _gameManager.SimulateRound(playerActions);
+                playerActions.Clear();
             }
             else
             {
@@ -92,11 +95,23 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                     }
                 }
             }
-            _gameManager.AddPlayer(new PlayerConfiguration {Coordinates = playerInitialCoordinates, Player = PlayerProvider.CurrentPlayer, StartAttributes = null});
+            _gameManager.AddPlayer(new PlayerConfiguration
+            {
+                Coordinates = playerInitialCoordinates,
+                Player = PlayerProvider.CurrentPlayer,
+                StartAttributes = new Dictionary<EntityAttribute, int>
+                {
+                    [EntityAttribute.MaxNeighboursForDead] = 6,
+                    [EntityAttribute.MaxNeighboursForLife] = 7,
+                    [EntityAttribute.MinNeighboursForDead] = 1,
+                    [EntityAttribute.MinNeighboursForLife] = 0
+                }
+            });
         }
 
         private void GeneratePlayerActions()
         {
+            playerActions.Add(new PlayerAction {Player = PlayerProvider.CurrentPlayer});
         }
     }
 }

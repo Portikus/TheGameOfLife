@@ -107,7 +107,7 @@ namespace GameOfLife.Backend
             {
                 for (int k = 0; k < newGameMap.Tiles[j].Length; k++)
                 {
-                    GameMap.Tiles[j][k] = newGameMap.Tiles[j][k];
+                    GameMap.Tiles[j][k].Entity = newGameMap.Tiles[j][k].Entity;
                 }
             }
         }
