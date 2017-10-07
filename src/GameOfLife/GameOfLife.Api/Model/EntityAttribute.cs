@@ -2,5 +2,6 @@
 {
     public enum EntityAttribute
     {
+        MinNeighboursForLife, MaxNeighboursForLife, MinNeighboursForDead, MaxNeighboursForDead
     }
 }

@@ -16,5 +16,12 @@ namespace GameOfLife.Api.Model
                 RaisePropertyChanged();
             }
         }
+
+        public bool IsAlive => Entity != null;
+
+        public override string ToString()
+        {
+            return Entity == null ? "Empty Tile" : $"Player {Entity.Owner.Name}";
+        }
     }
 }
