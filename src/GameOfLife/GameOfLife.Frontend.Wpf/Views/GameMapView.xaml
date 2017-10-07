@@ -13,6 +13,7 @@
     mc:Ignorable="d">
     <UserControl.Resources>
         <wpf:PlayerNameToColorConverter x:Key="PlayerNameToColorConverter" />
+        <wpf:TileToColorConverter x:Key="TileToColorConverter" />
     </UserControl.Resources>
     <ItemsControl ItemsSource="{Binding GameMap}">
         <ItemsControl.ItemsPanel>
@@ -31,12 +32,18 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Button
-                                Width="20"
-                                Height="20"
-                                Margin="2"
-                                Background="{Binding Entity, Converter={StaticResource PlayerNameToColorConverter}, FallbackValue=Gray}"
+                                Width="15"
+                                Height="15"
+                                BorderThickness="0"
                                 Command="{Binding ElementName=GameMapViewControl, Path=DataContext.TileSelectedCommand}"
-                                CommandParameter="{Binding}" />
+                                CommandParameter="{Binding}">
+                                <Button.Background>
+                                    <MultiBinding Converter="{StaticResource TileToColorConverter}">
+                                        <Binding Path="Entity" />
+                                        <Binding Path="Temperature" />
+                                    </MultiBinding>
+                                </Button.Background>
+                            </Button>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

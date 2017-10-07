@@ -1,8 +1,19 @@
 ﻿namespace GameOfLife.Api.Model
 {
-    public abstract class TileAttribute
+    public abstract class TileAttribute : ModelBase
     {
-        public double Value { get; set; }
+        private double _value;
+
+        public double Value
+        {
+            get { return _value; }
+            set
+            {
+                _value = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public double Step { get; }
         public double Minimum { get; }
         public double Maximum { get; }
