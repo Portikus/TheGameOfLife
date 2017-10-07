@@ -47,7 +47,7 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                 if (PlayerProvider.CurrentPlayer == PlayerProvider.Players.Last())
                 {
                     GameManager.Start();
-                    GameManager.GenerationDone += async (sender, args) => { await Task.Delay(100); };
+                    //GameManager.GenerationDone += async (sender, args) => { await Task.Delay(100); };
                 }
             }
             GeneratePlayerActions();
@@ -72,16 +72,22 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
             if (currentPlayerIndex == PlayerProvider.Players.Count - 1)
             {
                 PlayerProvider.CurrentPlayer = PlayerProvider.Players.First();
-                await Task.Run(() =>
-                {
-                    GameManager.SimulateRound(_playerActions);
-                    _playerActions.Clear();
-                });
+                await OneRound();
             }
             else
             {
                 PlayerProvider.CurrentPlayer = PlayerProvider.Players[currentPlayerIndex + 1];
             }
+        }
+
+        private async Task OneRound()
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                GameManager.SimulateGeneration(_playerActions);
+                await Task.Delay(200);
+            }
+            _playerActions.Clear();
         }
 
         private void GenerateInitialPlayerSetup()

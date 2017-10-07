@@ -95,6 +95,11 @@ namespace GameOfLife.Frontend.Wpf.Mocks
         {
         }
 
+        public void SimulateGeneration(IEnumerable<PlayerAction> playerActions)
+        {
+            
+        }
+
         public void SimulateRound(IEnumerable<PlayerAction> playerActions)
         {
         }
