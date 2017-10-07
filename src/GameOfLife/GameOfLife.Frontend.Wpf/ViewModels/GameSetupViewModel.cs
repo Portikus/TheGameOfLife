@@ -58,7 +58,6 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
         {
             _gameManager.GenerateGameMap(GameConfiguration);
             AddPlayer();
-            _gameManager.Start();
             _eventAggregator.GetEvent<GameStartedEvent>().Publish();
         }
 

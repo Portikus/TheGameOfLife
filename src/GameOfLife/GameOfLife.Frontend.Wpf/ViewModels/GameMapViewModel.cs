@@ -25,7 +25,7 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
             _playerProvider = playerProvider;
 
             GameMap = new ObservableCollection<ObservableCollection<Tile>>();
-            _tileSelectedCommand = new DelegateCommand<Tile>(TileSelectedCommandExecuted, t => gameManager.Started);
+            _tileSelectedCommand = new DelegateCommand<Tile>(TileSelectedCommandExecuted, t => !gameManager.Started);
             eventAggregator.GetEvent<GameStartedEvent>().Subscribe(OnGameStarted);
         }
 
