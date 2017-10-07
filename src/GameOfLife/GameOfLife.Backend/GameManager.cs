@@ -2,14 +2,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using GameOfLife.Api.Model;
 
 namespace GameOfLife.Backend
 {
-    public class GameManager : IGameManager
+    public class GameManager : IGameManager, INotifyPropertyChanged
     {
         private ICollection<Coordinate> _clearTiles;
 
@@ -19,37 +21,61 @@ namespace GameOfLife.Backend
 
         public int GenerationPerRound { get; private set; }
 
-        public int Round => throw new NotImplementedException();
+        public int Round
+        {
+            get { return _round; }
+            private set
+            {
+                _round = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public int Generations
+        {
+            get { return _generations; }
+            private set
+            {
+                _generations = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool Started
+        {
+            get { return _started; }
+            private set
+            {
+                _started = value; 
+                RaisePropertyChanged();
+            }
+        }
+
+        private ICollection<PlayerConfiguration> _playerConfigs;
+        private int _round;
+        private int _generations;
+        private bool _started;
 
         public event EventHandler<GameFinishedEventArgs> GameFinished;
+        public event EventHandler<GenerationDoneEventArgs> GenerationDone;
+        public event EventHandler<RoundDoneEventArgs> RoundDone;
 
         public GameManager()
         {
             PlayerList = new List<Player>();
             _clearTiles = new List<Coordinate>();
+            _playerConfigs = new List<PlayerConfiguration>();
+            _started = false;
         }
 
         public void AddPlayer(PlayerConfiguration configuration)
         {
-            PlayerList.Add(configuration.Player);
-            foreach (var coordinate in configuration.Coordinates)
-            {
-                if (GameMap.Tiles[coordinate.X][coordinate.Y].IsAlive)
-                {
-                    _clearTiles.Add(coordinate);
-                }
-                GameMap.Tiles[coordinate.X][coordinate.Y].Entity = new Entity()
-                {
-                    Owner = configuration.Player,
-                    EntityAttributes = configuration.StartAttributes
-                };
-            }
+            _playerConfigs.Add(configuration);
         }
 
         public GameMap GenerateGameMap(GameConfiguration gameConfiguration)
         {
-            GameMap = new GameMap();
-            GameMap.Tiles = new Tile[gameConfiguration.MapWidth][];
+            GameMap = new GameMap { Tiles = new Tile[gameConfiguration.MapWidth][] };
             for (int i = 0; i < GameMap.Tiles.Length; i++)
             {
                 GameMap.Tiles[i] = new Tile[gameConfiguration.MapHeight];
@@ -67,12 +93,14 @@ namespace GameOfLife.Backend
         {
             if (playerActions.Count() != PlayerList.Count)
             {
-                throw new ArgumentException("The Amount of Player Actions didn't match the Amount of Players", nameof(playerActions));
+                throw new ArgumentException("The amount of playeractions didn't match the amount of players", nameof(playerActions));
             }
-            for (int i = 0; i < GenerationPerRound; i++)
+            for (int i = 0; i <t GenerationPerRound; i++)
             {
                 SimulateGeneration();
             }
+            Round++;
+            RaiseRoundDoneEvent(new RoundDoneEventArgs());
         }
 
         private void SimulateGeneration()
@@ -107,9 +135,11 @@ namespace GameOfLife.Backend
             {
                 for (int k = 0; k < newGameMap.Tiles[j].Length; k++)
                 {
-                    GameMap.Tiles[j][k] = newGameMap.Tiles[j][k];
+                    GameMap.Tiles[j][k].Entity = newGameMap.Tiles[j][k].Entity;
                 }
             }
+            Generations++;
+            RaiseGenerationDoneEvent(new GenerationDoneEventArgs());
         }
 
         private void HandleDeadTile(IEnumerable<Tile> neighbours, GameMap newGameMap, int j, int k)
@@ -130,7 +160,6 @@ namespace GameOfLife.Backend
                         dontNeedThatMany = Math.Max(neighboursNeeded,
                             neighbour.Entity.EntityAttributes[EntityAttribute.MaxNeighboursForDead]);
                         presentNeighbours++;
-                        var attr = new Dictionary<EntityAttribute, int>();
                         foreach (var entityAttribute in neighbour.Entity.EntityAttributes)
                         {
                             newAttribute[entityAttribute.Key] = entityAttribute.Value;
@@ -139,7 +168,7 @@ namespace GameOfLife.Backend
                 }
 
 
-                if (presentNeighbours >= neighboursNeeded && dontNeedThatMany <= presentNeighbours)
+                if (presentNeighbours >= neighboursNeeded && presentNeighbours <= dontNeedThatMany)
                 {
                     playerWantsHere.Add(true);
                 }
@@ -176,10 +205,28 @@ namespace GameOfLife.Backend
 
         public void Start()
         {
+            foreach (var configuration in _playerConfigs)
+            {
+                PlayerList.Add(configuration.Player);
+                foreach (var coordinate in configuration.Coordinates)
+                {
+                    if (GameMap.Tiles[coordinate.X][coordinate.Y].IsAlive)
+                    {
+                        _clearTiles.Add(coordinate);
+                    }
+                    GameMap.Tiles[coordinate.X][coordinate.Y].Entity = new Entity()
+                    {
+                        Owner = configuration.Player,
+                        EntityAttributes = configuration.StartAttributes
+                    };
+                }
+            }
+
             foreach (var coordinate in _clearTiles)
             {
                 GameMap.Tiles[coordinate.X][coordinate.Y].Entity = null;
             }
+            Started = true;
         }
 
         private IEnumerable<Tile> getLivingNeighbours(int x, int y)
@@ -219,11 +266,33 @@ namespace GameOfLife.Backend
                     }
                     else
                     {
-                        Debug.Write($" {tile.Entity.Owner.Name.Substring(0,1)} ");
+                        Debug.Write($" {tile.Entity.Owner.Name.Substring(0, 1)} ");
                     }
                 }
                 Debug.WriteLine("");
             }
+        }
+
+        protected virtual void RaiseGameFinishedEvent(GameFinishedEventArgs e)
+        {
+            GameFinished?.Invoke(this, e);
+        }
+
+        protected virtual void RaiseGenerationDoneEvent(GenerationDoneEventArgs e)
+        {
+            GenerationDone?.Invoke(this, e);
+        }
+
+        protected virtual void RaiseRoundDoneEvent(RoundDoneEventArgs e)
+        {
+            RoundDone?.Invoke(this, e);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

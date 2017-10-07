@@ -14,7 +14,11 @@ namespace GameOfLife.Frontend.Wpf.Mocks
 
         public GameMap GameMap { get; private set; }
         public int Round { get; }
+        public int Generations { get; }
+        public bool Started { get; }
         public event EventHandler<GameFinishedEventArgs> GameFinished;
+        public event EventHandler<GenerationDoneEventArgs> GenerationDone;
+        public event EventHandler<RoundDoneEventArgs> RoundDone;
 
         public GameMap GenerateGameMap(GameConfiguration gameConfiguration)
         {
