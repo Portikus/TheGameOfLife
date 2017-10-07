@@ -106,9 +106,9 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                 StartAttributes = new Dictionary<EntityAttribute, int>
                 {
                     [EntityAttribute.MaxNeighboursForDead] = 3,
-                    [EntityAttribute.MaxNeighboursForLife] = 9,
-                    [EntityAttribute.MinNeighboursForDead] = 2,
-                    [EntityAttribute.MinNeighboursForLife] = 1
+                    [EntityAttribute.MaxNeighboursForLife] = 3,
+                    [EntityAttribute.MinNeighboursForDead] = 3,
+                    [EntityAttribute.MinNeighboursForLife] = 2
                 }
             });
         }
