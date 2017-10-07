@@ -15,6 +15,8 @@ namespace GameOfLife.Backend
     {
         private ICollection<Coordinate> _clearTiles;
 
+        private ICollection<HotSpot> _hotSpots;
+
         public IList<Player> PlayerList { get; set; }
 
         public GameMap GameMap { get; private set; }
@@ -46,7 +48,7 @@ namespace GameOfLife.Backend
             get { return _started; }
             private set
             {
-                _started = value; 
+                _started = value;
                 RaisePropertyChanged();
             }
         }
@@ -55,6 +57,8 @@ namespace GameOfLife.Backend
         private int _round;
         private int _generations;
         private bool _started;
+        private double _gameMapDiagonal;
+        private Random _random = new Random();
 
         public event EventHandler<GameFinishedEventArgs> GameFinished;
         public event EventHandler<GenerationDoneEventArgs> GenerationDone;
@@ -75,6 +79,8 @@ namespace GameOfLife.Backend
 
         public GameMap GenerateGameMap(GameConfiguration gameConfiguration)
         {
+            _gameMapDiagonal = CalculatePytagoras(gameConfiguration.MapWidth, gameConfiguration.MapHeight);
+            _hotSpots = GenerateHotSpots(gameConfiguration.MapWidth, gameConfiguration.MapHeight);
             GameMap = new GameMap { Tiles = new Tile[gameConfiguration.MapWidth][] };
             for (int i = 0; i < GameMap.Tiles.Length; i++)
             {
@@ -82,12 +88,12 @@ namespace GameOfLife.Backend
                 for (int j = 0; j < GameMap.Tiles[i].Length; j++)
                 {
                     GameMap.Tiles[i][j] = new Tile();
+                    GameMap.Tiles[i][j].Temperature.Value = CalculateTemperature(i, j);
                 }
             }
             GenerationPerRound = gameConfiguration.GenerationsPerRound;
             return GameMap;
         }
-
 
         public void SimulateRound(IEnumerable<PlayerAction> playerActions)
         {
@@ -115,7 +121,7 @@ namespace GameOfLife.Backend
                 {
                     var newTile = new Tile()
                     {
-                        TileAttributes = GameMap.Tiles[j][k].TileAttributes
+                        // hier war was mit Tileattributes
                     };
                     newGameMap.Tiles[j][k] = newTile;
                     var neighbours = getLivingNeighbours(j, k);
@@ -253,6 +259,7 @@ namespace GameOfLife.Backend
 
         public void VisualizeGamestate(GameMap map)
         {
+#if DEBUG
             Debug.WriteLine("===============================================================");
             Debug.WriteLine("Visualizing Game State");
             for (int i = 0; i < map.Tiles.Length; i++)
@@ -271,6 +278,50 @@ namespace GameOfLife.Backend
                 }
                 Debug.WriteLine("");
             }
+#endif
+        }
+
+        private ICollection<HotSpot> GenerateHotSpots(int width, int height)
+        {
+            var result = new List<HotSpot>();
+            int tileCount = width * height;
+            int hotSpotCount = _random.Next(tileCount / 100, tileCount / 20);
+            for (int i = 0; i < hotSpotCount; i++)
+            {
+                result.Add(new HotSpot()
+                {
+                    X = _random.Next(0, width),
+                    Y = _random.Next(0, height),
+                    Temperature = _random.Next(Temperature.MinTemperature, Temperature.MaxTemperature),
+                    FallOffFactor = 2
+                });
+            }
+            return result;
+        }
+
+
+        private double CalculateTemperature(int x, int y)
+        {
+            return _hotSpots.Select(h => CalculateTemperatureForHotSpot(x, y, h)).Average();
+        }
+
+        private double CalculateTemperatureForHotSpot(int x, int y, HotSpot spot)
+        {
+            return spot.Temperature - (spot.Temperature / (_gameMapDiagonal / spot.FallOffFactor) *
+                                       CalculatePytagoras(spot.X - x, spot.Y - y));
+        }
+
+        private double CalculatePytagoras(int x, int y)
+        {
+            return Math.Sqrt(x * x, y * y);
+        }
+
+        private class HotSpot
+        {
+            public int X { get; set; }
+            public int Y { get; set; }
+            public int Temperature { get; set; }
+            public int FallOffFactor { get; set; }
         }
 
         protected virtual void RaiseGameFinishedEvent(GameFinishedEventArgs e)

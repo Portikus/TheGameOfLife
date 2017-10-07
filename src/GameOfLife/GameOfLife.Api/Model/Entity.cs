@@ -4,7 +4,9 @@ namespace GameOfLife.Api.Model
 {
     public class Entity
     {
-        public Temperature IdealTemperature { get; set; }
+        public double IdealTemperature { get; set; }
+        public double Efficiency { get; set; }
+        public double Resitance { get; set; }
         public IDictionary<EntityAttribute, int> EntityAttributes { get; set; }
         public Player Owner { get; set; }
 
