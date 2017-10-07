@@ -52,7 +52,7 @@ namespace GameOfLife.Backend.Tests
                         Y = 4
                     }
                 };
-                var startAttributes = new Dictionary<EntityAttribute, int>();
+                var startAttributes = GenerateStartAttributes();
 
                 _systemUnderTest.AddPlayer(new PlayerConfiguration()
                 {
@@ -65,6 +65,16 @@ namespace GameOfLife.Backend.Tests
             _systemUnderTest.Start();
 
             Assert.That(gameMap.Tiles[3][4], Has.Property(nameof(Tile.Entity)).Null);
+        }
+
+        private static Dictionary<EntityAttribute, int> GenerateStartAttributes()
+        {
+            var startAttributes = new Dictionary<EntityAttribute, int>();
+            startAttributes[EntityAttribute.MaxNeighboursForDead] = 6;
+            startAttributes[EntityAttribute.MaxNeighboursForLife] = 7;
+            startAttributes[EntityAttribute.MinNeighboursForDead] = 1;
+            startAttributes[EntityAttribute.MinNeighboursForLife] = 0;
+            return startAttributes;
         }
 
         [Test]
@@ -118,7 +128,7 @@ namespace GameOfLife.Backend.Tests
                         Y = i
                     }
                 };
-                var startAttributes = new Dictionary<EntityAttribute, int>();
+                var startAttributes = GenerateStartAttributes();
 
                 _systemUnderTest.AddPlayer(new PlayerConfiguration()
                 {
