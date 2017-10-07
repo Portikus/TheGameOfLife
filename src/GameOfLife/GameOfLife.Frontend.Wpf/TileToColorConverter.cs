@@ -27,8 +27,8 @@ namespace GameOfLife.Frontend.Wpf
 
         private object GetTemperatureColor(Temperature temperature)
         {
-            var red = temperature.Value < temperature.MedianValue ? 0 : byte.MaxValue;
-            var blue = temperature.Value > temperature.MedianValue ? 0 : byte.MaxValue;
+            var blue = temperature.Value < temperature.MedianValue ? 0 : byte.MaxValue;
+            var red = temperature.Value > temperature.MedianValue ? 0 : byte.MaxValue;
             
             var minMedianDifference = Math.Abs(temperature.Minimum - temperature.MedianValue);
             var maxMedianDifference = Math.Abs(temperature.Maximum - temperature.MedianValue);
