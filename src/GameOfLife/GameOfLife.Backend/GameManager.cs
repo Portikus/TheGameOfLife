@@ -65,6 +65,7 @@ namespace GameOfLife.Backend
             PlayerList = new List<Player>();
             _clearTiles = new List<Coordinate>();
             _playerConfigs = new List<PlayerConfiguration>();
+            _started = false;
         }
 
         public void AddPlayer(PlayerConfiguration configuration)
