@@ -81,7 +81,7 @@ namespace GameOfLife.Backend.Tests
         public void TestMissingPlayerAction()
         {
             CreateValidGameState();
-            Assert.That(() => _systemUnderTest.SimulateRound(new List<PlayerAction>()), Throws.Exception);
+            Assert.That(() => _systemUnderTest.SimulateGeneration(new List<PlayerAction>()), Throws.Exception);
         }
 
         [Test]
@@ -97,7 +97,7 @@ namespace GameOfLife.Backend.Tests
                     Player = player
                 });
             }
-            _systemUnderTest.SimulateRound(actions);
+            _systemUnderTest.SimulateGeneration(actions);
             Assert.That(CountAliveTiles(gameMap), Is.GreaterThan(oldTiles));
         }
 
