@@ -6,6 +6,8 @@
 
         public Temperature Temperature { get; }
 
+        public bool DebugHighlight { get; set; }
+
         public Entity Entity
         {
             get => _entity;
