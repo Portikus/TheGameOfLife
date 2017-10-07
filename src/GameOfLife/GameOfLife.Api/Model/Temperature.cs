@@ -4,7 +4,8 @@
     {
         public static int MinTemperature = -10;
         public static int MaxTemperature = 40;
-        public Temperature() : base(1, -MinTemperature, MaxTemperature)
+        public static int MedianTemperature = 15;
+        public Temperature() : base(1, MinTemperature, MaxTemperature)
         {
         }
     }
