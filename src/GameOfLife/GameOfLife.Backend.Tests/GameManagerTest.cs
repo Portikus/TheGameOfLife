@@ -88,8 +88,8 @@ namespace GameOfLife.Backend.Tests
         public void TestSimulateRound()
         {
             var gameMap = CreateValidGameState();
-            var oldTiles = gameMap.Tiles.Clone();
             var actions = new List<PlayerAction>();
+            var oldTiles = CountAliveTiles(gameMap);
             foreach (var player in _systemUnderTest.PlayerList)
             {
                 actions.Add(new PlayerAction()
@@ -98,9 +98,12 @@ namespace GameOfLife.Backend.Tests
                 });
             }
             _systemUnderTest.SimulateRound(actions);
-            Assert.That(gameMap.Tiles, Is.Not.EqualTo(oldTiles));
+            Assert.That(CountAliveTiles(gameMap), Is.GreaterThan(oldTiles));
+        }
 
-
+        private int CountAliveTiles(GameMap map)
+        {
+            return map.Tiles.Sum(tileArray => tileArray.Count(tile => tile.IsAlive));
         }
 
         private GameMap GenerateGameMap(int size)

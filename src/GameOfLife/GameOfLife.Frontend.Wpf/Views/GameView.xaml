@@ -11,13 +11,23 @@
     d:DesignWidth="300"
     mc:Ignorable="d">
     <DockPanel>
-        <DockPanel DockPanel.Dock="Left">
+        <Grid Margin="10" DockPanel.Dock="Left">
             <Button
+                Margin="3"
+                Padding="5"
+                HorizontalAlignment="Stretch"
                 VerticalAlignment="Bottom"
                 Command="{Binding EndTurnCommand}"
                 Content="End round" />
-            <Label VerticalAlignment="Top" Content="{Binding PlayerProvider.CurrentPlayer.Name}" />
-        </DockPanel>
-        <local:GameMapView DataContext="{Binding GameMapViewModel}"/>
+            <Label
+                Margin="5"
+                VerticalAlignment="Top"
+                Content="{Binding PlayerProvider.CurrentPlayer.Name}"
+                FontSize="20" />
+        </Grid>
+        <local:GameMapView
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            DataContext="{Binding GameMapViewModel}" />
     </DockPanel>
 </UserControl>

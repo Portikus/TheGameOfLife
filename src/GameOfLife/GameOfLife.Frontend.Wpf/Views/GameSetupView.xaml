@@ -20,19 +20,33 @@
                 Content="Start Game" />
         </Grid>
         <DockPanel DockPanel.Dock="Left">
-            <TextBlock DockPanel.Dock="Top">Players</TextBlock>
-            <ListView
+            <Label
+                HorizontalAlignment="Center"
+                Content="Players"
+                DockPanel.Dock="Top"
+                FontSize="20" />
+            <ItemsControl
                 VerticalAlignment="Top"
                 BorderThickness="0"
                 DockPanel.Dock="Top"
                 ItemsSource="{Binding Players}">
-                <ListView.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Vertical" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <TextBox Text="{Binding Name}" />
+                        <TextBox
+                            Width="100"
+                            Margin="3"
+                            FontSize="15"
+                            Text="{Binding Name}" />
                     </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
             <Button
+                Width="100"
                 VerticalAlignment="Top"
                 Command="{Binding AddPlayerCommand}"
                 Content="+"
@@ -55,29 +69,41 @@
                 <TextBlock
                     Grid.Row="0"
                     Grid.Column="0"
+                    Margin="3"
+                    FontSize="15"
                     Text="Width: " />
                 <TextBox
                     Grid.Row="0"
                     Grid.Column="1"
-                    Width="20"
+                    Width="30"
+                    Margin="3"
+                    FontSize="15"
                     Text="{Binding MapWidth}" />
                 <TextBlock
                     Grid.Row="1"
                     Grid.Column="0"
+                    Margin="3"
+                    FontSize="15"
                     Text="Height: " />
                 <TextBox
                     Grid.Row="1"
                     Grid.Column="1"
-                    Width="20"
+                    Width="30"
+                    Margin="3"
+                    FontSize="15"
                     Text="{Binding MapHeight}" />
                 <TextBlock
                     Grid.Row="2"
                     Grid.Column="0"
+                    Margin="3"
+                    FontSize="15"
                     Text="Generations per round: " />
                 <TextBox
                     Grid.Row="2"
                     Grid.Column="1"
-                    Width="20"
+                    Width="30"
+                    Margin="3"
+                    FontSize="15"
                     Text="{Binding GenerationsPerRound}" />
             </Grid>
         </DockPanel>
