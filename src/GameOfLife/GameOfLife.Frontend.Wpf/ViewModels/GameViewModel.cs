@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
 using GameOfLife.Api;
@@ -14,37 +13,52 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
     public class GameViewModel
     {
         private readonly DelegateCommand _endTurnCommand;
-        private readonly IEventAggregator _eventAggregator;
         private readonly IGameManager _gameManager;
-        private readonly PlayerProvider _playerProvider;
-        private bool gameStarted;
-        public Player CurrentPlayer { get; set; }
+        public  PlayerProvider PlayerProvider { get; }
+        private bool _gameStarted;
 
         public ICommand EndTurnCommand => _endTurnCommand;
 
         public GameViewModel(IGameManager gameManager, PlayerProvider playerProvider, IEventAggregator eventAggregator)
         {
             _gameManager = gameManager;
-            _playerProvider = playerProvider;
-            _eventAggregator = eventAggregator;
+            PlayerProvider = playerProvider;
             _endTurnCommand = new DelegateCommand(EndTurnExecuteMethod);
 
-            _eventAggregator.GetEvent<GameStartedEvent>().Subscribe(OnGameStarted);
+            eventAggregator.GetEvent<GameStartedEvent>().Subscribe(OnGameStarted);
         }
 
         private void OnGameStarted()
         {
-            CurrentPlayer = _playerProvider.Players.First();
-            _playerProvider.CurrentPlayer = CurrentPlayer;
+            PlayerProvider.CurrentPlayer = PlayerProvider.Players.First();
         }
 
         private void EndTurnExecuteMethod()
         {
-            if (gameStarted)
+            if (_gameStarted == false)
             {
-                GeneratePlayerActions();
+                GenerateInitialPlayerSetup();
+                if (PlayerProvider.CurrentPlayer == PlayerProvider.Players.Last())
+                {
+                    _gameManager.Start();
+                    _gameStarted = true;
+                }
             }
-            GenerateInitialPlayerSetup();
+            GeneratePlayerActions();
+            SelectNextPlayer();
+        }
+
+        private void SelectNextPlayer()
+        {
+            var currentPlayerIndex = PlayerProvider.Players.IndexOf(PlayerProvider.CurrentPlayer);
+            if (currentPlayerIndex == PlayerProvider.Players.Count - 1)
+            {
+                PlayerProvider.CurrentPlayer = PlayerProvider.Players.First();
+            }
+            else
+            {
+                PlayerProvider.CurrentPlayer = PlayerProvider.Players[currentPlayerIndex + 1];
+            }
         }
 
         private void GenerateInitialPlayerSetup()
@@ -56,18 +70,17 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                 for (var j = 0; j < gameMap.Tiles[i].Length; j++)
                 {
                     var tile = gameMap.Tiles[i][j];
-                    if (tile.Entity?.Owner == CurrentPlayer)
+                    if (tile.Entity?.Owner == PlayerProvider.CurrentPlayer)
                     {
                         playerInitialCoordinates.Add(new Coordinate {X = i, Y = j});
                     }
                 }
             }
-            _gameManager.AddPlayer(new PlayerConfiguration {Coordinates = playerInitialCoordinates, Player = CurrentPlayer, StartAttributes = null});
+            _gameManager.AddPlayer(new PlayerConfiguration {Coordinates = playerInitialCoordinates, Player = PlayerProvider.CurrentPlayer, StartAttributes = null});
         }
 
         private void GeneratePlayerActions()
         {
-            throw new NotImplementedException();
         }
     }
 }
