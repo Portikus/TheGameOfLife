@@ -9,7 +9,7 @@ namespace GameOfLife.Api
         GameMap GameMap { get; }
         int Round { get; }
         int Generations { get; }
-        int Started { get; }
+        bool Started { get; }
         event EventHandler<GameFinishedEventArgs> GameFinished;
         event EventHandler<GenerationDoneEventArgs> GenerationDone;
         event EventHandler<RoundDoneEventArgs> RoundDone;

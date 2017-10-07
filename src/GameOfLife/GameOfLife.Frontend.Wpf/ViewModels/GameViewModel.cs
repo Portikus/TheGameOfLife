@@ -14,8 +14,7 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
     {
         private readonly DelegateCommand _endTurnCommand;
         private readonly IGameManager _gameManager;
-        private readonly List<PlayerAction> playerActions = new List<PlayerAction>();
-        private bool _gameStarted;
+        private readonly List<PlayerAction> _playerActions = new List<PlayerAction>();
         public PlayerProvider PlayerProvider { get; }
 
         public ICommand EndTurnCommand => _endTurnCommand;
@@ -39,14 +38,13 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
 
         private void EndTurnExecuteMethod()
         {
-            if (_gameStarted == false)
+            if (_gameManager.Started == false)
             {
                 GenerateInitialPlayerSetup();
                 RemoveInitialSetup();
                 if (PlayerProvider.CurrentPlayer == PlayerProvider.Players.Last())
                 {
                     _gameManager.Start();
-                    _gameStarted = true;
                 }
             }
             GeneratePlayerActions();
@@ -71,8 +69,8 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
             if (currentPlayerIndex == PlayerProvider.Players.Count - 1)
             {
                 PlayerProvider.CurrentPlayer = PlayerProvider.Players.First();
-                _gameManager.SimulateRound(playerActions);
-                playerActions.Clear();
+                _gameManager.SimulateRound(_playerActions);
+                _playerActions.Clear();
             }
             else
             {
@@ -101,17 +99,17 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                 Player = PlayerProvider.CurrentPlayer,
                 StartAttributes = new Dictionary<EntityAttribute, int>
                 {
-                    [EntityAttribute.MaxNeighboursForDead] = 6,
-                    [EntityAttribute.MaxNeighboursForLife] = 7,
-                    [EntityAttribute.MinNeighboursForDead] = 1,
-                    [EntityAttribute.MinNeighboursForLife] = 0
+                    [EntityAttribute.MaxNeighboursForDead] = 3,
+                    [EntityAttribute.MaxNeighboursForLife] = 3,
+                    [EntityAttribute.MinNeighboursForDead] = 3,
+                    [EntityAttribute.MinNeighboursForLife] = 2
                 }
             });
         }
 
         private void GeneratePlayerActions()
         {
-            playerActions.Add(new PlayerAction {Player = PlayerProvider.CurrentPlayer});
+            _playerActions.Add(new PlayerAction {Player = PlayerProvider.CurrentPlayer});
         }
     }
 }
