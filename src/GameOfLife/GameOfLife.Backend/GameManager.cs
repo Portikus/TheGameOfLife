@@ -21,29 +21,20 @@ namespace GameOfLife.Backend
 
         public int Round => throw new NotImplementedException();
 
+        private ICollection<PlayerConfiguration> _playerConfigs;
+
         public event EventHandler<GameFinishedEventArgs> GameFinished;
 
         public GameManager()
         {
             PlayerList = new List<Player>();
             _clearTiles = new List<Coordinate>();
+            _playerConfigs = new List<PlayerConfiguration>();
         }
 
         public void AddPlayer(PlayerConfiguration configuration)
         {
-            PlayerList.Add(configuration.Player);
-            foreach (var coordinate in configuration.Coordinates)
-            {
-                if (GameMap.Tiles[coordinate.X][coordinate.Y].IsAlive)
-                {
-                    _clearTiles.Add(coordinate);
-                }
-                GameMap.Tiles[coordinate.X][coordinate.Y].Entity = new Entity()
-                {
-                    Owner = configuration.Player,
-                    EntityAttributes = configuration.StartAttributes
-                };
-            }
+            _playerConfigs.Add(configuration);
         }
 
         public GameMap GenerateGameMap(GameConfiguration gameConfiguration)
@@ -176,10 +167,28 @@ namespace GameOfLife.Backend
 
         public void Start()
         {
+            foreach (var configuration in _playerConfigs)
+            {
+                PlayerList.Add(configuration.Player);
+                foreach (var coordinate in configuration.Coordinates)
+                {
+                    if (GameMap.Tiles[coordinate.X][coordinate.Y].IsAlive)
+                    {
+                        _clearTiles.Add(coordinate);
+                    }
+                    GameMap.Tiles[coordinate.X][coordinate.Y].Entity = new Entity()
+                    {
+                        Owner = configuration.Player,
+                        EntityAttributes = configuration.StartAttributes
+                    };
+                }
+            }
+
             foreach (var coordinate in _clearTiles)
             {
                 GameMap.Tiles[coordinate.X][coordinate.Y].Entity = null;
             }
+
         }
 
         private IEnumerable<Tile> getLivingNeighbours(int x, int y)
