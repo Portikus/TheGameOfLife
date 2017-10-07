@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using Autofac;
-using GameOfLife.Frontend.Wpf.Mocks;
 using GameOfLife.Frontend.Wpf.Model;
 using GameOfLife.Frontend.Wpf.Views;
 using Prism.Autofac;
@@ -14,7 +13,6 @@ namespace GameOfLife.Frontend.Wpf
         protected override void ConfigureContainerBuilder(ContainerBuilder builder)
         {
             base.ConfigureContainerBuilder(builder);
-            //builder.RegisterType<GameManagerMock>().AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<GameManager>().AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<EventAggregator>().AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<PlayerProvider>().SingleInstance();

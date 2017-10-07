@@ -80,18 +80,13 @@
     </Compile>
     <Compile Include="BoolToVisibleConverter.cs" />
     <Compile Include="Bootstrapper.cs" />
-    <Compile Include="Mocks\GameManagerMock.cs" />
     <Compile Include="Model\PlayerProvider.cs" />
     <Compile Include="PlayerNameToColorConverter.cs" />
-    <Compile Include="ViewModels\EntityAttributesViewModel.cs" />
     <Compile Include="ViewModels\GameMapViewModel.cs" />
     <Compile Include="ViewModels\GameViewModel.cs" />
     <Compile Include="ViewModels\GameSetupViewModel.cs" />
     <Compile Include="Events\GameStartedEvent.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
-    <Compile Include="Views\EntityAttributesView.xaml.cs">
-      <DependentUpon>EntityAttributesView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\GameMapView.xaml.cs">
       <DependentUpon>GameMapView.xaml</DependentUpon>
     </Compile>
@@ -133,10 +128,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Views\EntityAttributesView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\GameMapView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -164,5 +155,6 @@
       <Name>GameOfLife.Backend</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
