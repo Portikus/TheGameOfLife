@@ -304,8 +304,24 @@ namespace GameOfLife.Backend
         
         private double CalculateTemperatureForHotSpot(int x, int y, HotSpot spot)
         {
-            return spot.Temperature - (spot.Temperature / spot.FallOffDistance *
-                                       CalculatePytagoras(spot.X - x, spot.Y - y));
+            if (spot.Temperature > 0)
+            {
+                return Clamp(spot.Temperature - (spot.Temperature / spot.FallOffDistance *
+                                                 CalculatePytagoras(spot.X - x, spot.Y - y)), 0,
+                    Temperature.MaxTemperature);
+
+            }
+            else
+            {
+                return Clamp(spot.Temperature - (spot.Temperature / spot.FallOffDistance *
+                                                 CalculatePytagoras(spot.X - x, spot.Y - y)),
+                    Temperature.MinTemperature,0);
+            }
+        }
+
+        private double Clamp(double value, double min, double max)
+        {
+            return value > min ? value < max ? value : min : max;
         }
 
         private double CalculatePytagoras(int x, int y)
