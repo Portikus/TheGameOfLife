@@ -1,6 +1,14 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Data;
 using System.Windows.Input;
+using System.Xml.Serialization;
 using GameOfLife.Api;
 using GameOfLife.Api.Model;
 using GameOfLife.Frontend.Wpf.Events;
@@ -17,7 +25,23 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
         private readonly IEventAggregator _eventAggregator;
         private readonly IGameManager _gameManager;
         private readonly PlayerProvider _playerProvider;
+        private readonly UdpClient _receiverUdpClient;
+        private readonly UdpClient _senderUdpClient;
         private readonly DelegateCommand _startGameCommand;
+        private string _status;
+        public bool IsHost { get; set; }
+
+        public string Status
+        {
+            get => _status;
+            set
+            {
+                _status = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string PlayerName { get; set; }
 
         public ObservableCollection<Player> Players { get; set; }
         public GameConfiguration GameConfiguration { get; set; }
@@ -26,17 +50,17 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
 
         public GameSetupViewModel(IGameManager gameManager, IEventAggregator eventAggregator, PlayerProvider playerProvider)
         {
+            Players = new ObservableCollection<Player>();
+            BindingOperations.EnableCollectionSynchronization(Players, this);
             _eventAggregator = eventAggregator;
             _playerProvider = playerProvider;
             _gameManager = gameManager ?? throw new ArgumentNullException(nameof(gameManager));
 
-            Players = new ObservableCollection<Player>
-            {
-                new Player {Name = "Jonas"},
-                new Player {Name = "Florian"},
-                //new Player {Name = "Jannik"},
-                //new Player {Name = "Sebastian"}
-            };
+            _receiverUdpClient = new UdpClient(new IPEndPoint(IPAddress.Parse(GetLocalIpAddress()), 10000));
+            _senderUdpClient = new UdpClient();
+            Task.Run(ReceiveHeartBeatsAsync);
+            Task.Run(SendHeartBeats);
+
             GameConfiguration = new GameConfiguration {MapHeight = 100, MapWidth = 100, GenerationsPerRound = 1};
 
             _startGameCommand = new DelegateCommand(StartGameCommandExecuteMethod, StartGameCommandCanExecuteMethod);
@@ -65,5 +89,86 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
         {
             _playerProvider.Players.AddRange(Players);
         }
+
+        public static string GetLocalIpAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
+            }
+            throw new Exception("Local IP Address Not Found!");
+        }
+
+        private async Task SendHeartBeats()
+        {
+            try
+            {
+                while (true)
+                {
+                    await Task.Delay(1000);
+                    if (string.IsNullOrEmpty(PlayerName))
+                    {
+                        continue;
+                    }
+                    var heartBeat = new HeartBeat {PlayerName = PlayerName};
+                    var xmlSerializer = new XmlSerializer(heartBeat.GetType());
+
+                    using (var textWriter = new StringWriter())
+                    {
+                        xmlSerializer.Serialize(textWriter, heartBeat);
+                        var txt = textWriter.ToString();
+                        var toBytes = Encoding.UTF8.GetBytes(txt);
+                        for (byte i = 1; i < 255; i++)
+                        {
+                            await _senderUdpClient.SendAsync(toBytes, toBytes.Length, new IPEndPoint(new IPAddress(new byte[] {192, 168, 80, i}), 10000));
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Status = e.ToString();
+            }
+        }
+
+        private async Task ReceiveHeartBeatsAsync()
+        {
+            try
+            {
+                while (true)
+                {
+                    var data = await _receiverUdpClient.ReceiveAsync();
+                    var str = Encoding.UTF8.GetString(data.Buffer);
+                    var serializer = new XmlSerializer(typeof(HeartBeat));
+                    HeartBeat result;
+                    using (TextReader reader = new StringReader(str))
+                    {
+                        result = serializer.Deserialize(reader) as HeartBeat;
+                    }
+                    if (result == null)
+                    {
+                        Status = "Fehler";
+                        continue;
+                    }
+                    if (Players.Any(x => x.Name == result.PlayerName) == false)
+                    {
+                        Players.Add(new Player(){Name = result.PlayerName});
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Status = e.ToString();
+            }
+        }
+    }
+
+    public class HeartBeat
+    {
+        public string PlayerName { get; set; }
     }
 }

@@ -12,6 +12,7 @@
     d:DesignWidth="300"
     mc:Ignorable="d">
     <DockPanel Margin="10">
+        <Label Content="{Binding Status}" DockPanel.Dock="Bottom" />
         <Grid DockPanel.Dock="Bottom">
             <Button
                 Padding="5"
@@ -22,7 +23,13 @@
         <DockPanel DockPanel.Dock="Left">
             <Label
                 HorizontalAlignment="Center"
-                Content="Players"
+                Content="Your name"
+                DockPanel.Dock="Top"
+                FontSize="20" />
+            <TextBox DockPanel.Dock="Top" Text="{Binding PlayerName}" />
+            <Label
+                HorizontalAlignment="Center"
+                Content="Available Players"
                 DockPanel.Dock="Top"
                 FontSize="20" />
             <ItemsControl
@@ -38,7 +45,6 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <TextBox
-                            Width="100"
                             Margin="3"
                             FontSize="15"
                             Text="{Binding Name}" />
@@ -46,7 +52,6 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
             <Button
-                Width="100"
                 VerticalAlignment="Top"
                 Command="{Binding AddPlayerCommand}"
                 Content="+"

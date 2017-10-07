@@ -34,11 +34,6 @@
                 </Binding>
             </views:GameSetupView.Visibility>
         </views:GameSetupView>
-        <!--<views:LobbyView>
-            <views:LobbyView.DataContext>
-                <viewModels:LobbyViewModel />
-            </views:LobbyView.DataContext>
-        </views:LobbyView>-->
     </Grid>
 </Window>
 
