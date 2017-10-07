@@ -23,16 +23,6 @@ namespace GameOfLife.Backend
 
         public int GenerationPerRound { get; private set; }
 
-        public int Round
-        {
-            get { return _round; }
-            private set
-            {
-                _round = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public int Generations
         {
             get { return _generations; }
@@ -54,7 +44,6 @@ namespace GameOfLife.Backend
         }
 
         private ICollection<PlayerConfiguration> _playerConfigs;
-        private int _round;
         private int _generations;
         private bool _started;
         private double _gameMapDiagonal;
@@ -62,7 +51,6 @@ namespace GameOfLife.Backend
 
         public event EventHandler<GameFinishedEventArgs> GameFinished;
         public event EventHandler<GenerationDoneEventArgs> GenerationDone;
-        public event EventHandler<RoundDoneEventArgs> RoundDone;
 
         public GameManager()
         {
@@ -95,22 +83,13 @@ namespace GameOfLife.Backend
             return GameMap;
         }
 
-        public void SimulateRound(IEnumerable<PlayerAction> playerActions)
+        public void SimulateGeneration(IEnumerable<PlayerAction> playerActions)
         {
             if (playerActions.Count() != PlayerList.Count)
             {
                 throw new ArgumentException("The amount of playeractions didn't match the amount of players", nameof(playerActions));
             }
-            for (int i = 0; i < GenerationPerRound; i++)
-            {
-                SimulateGeneration();
-            }
-            Round++;
-            RaiseRoundDoneEvent(new RoundDoneEventArgs());
-        }
 
-        private void SimulateGeneration()
-        {
             GameMap newGameMap = new GameMap();
             newGameMap.Tiles = new Tile[GameMap.Tiles.Length][];
 
@@ -326,7 +305,7 @@ namespace GameOfLife.Backend
 
         private double CalculatePytagoras(int x, int y)
         {
-            return Math.Sqrt(x * x, y * y);
+            return Math.Sqrt(x * x + y * y);
         }
 
         private class HotSpot
@@ -345,11 +324,6 @@ namespace GameOfLife.Backend
         protected virtual void RaiseGenerationDoneEvent(GenerationDoneEventArgs e)
         {
             GenerationDone?.Invoke(this, e);
-        }
-
-        protected virtual void RaiseRoundDoneEvent(RoundDoneEventArgs e)
-        {
-            RoundDone?.Invoke(this, e);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
