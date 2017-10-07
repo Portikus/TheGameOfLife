@@ -12,7 +12,7 @@ namespace GameOfLife.Frontend.Wpf
         protected override void ConfigureContainerBuilder(ContainerBuilder builder)
         {
             base.ConfigureContainerBuilder(builder);
-            builder.RegisterType<GameManagerMock>().AsImplementedInterfaces();
+            builder.RegisterType<GameManagerMock>().AsImplementedInterfaces().SingleInstance();
             builder.RegisterType<EventAggregator>().AsImplementedInterfaces().SingleInstance();
         }
 

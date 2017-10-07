@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace GameOfLife.Frontend.Wpf.Views
 {
     /// <summary>
-    /// Interaction logic for GameMap.xaml
+    /// Interaction logic for GameMapViewModel.xaml
     /// </summary>
-    public partial class GameMap : UserControl
+    public partial class GameMapView : UserControl
     {
-        public GameMap()
+        public GameMapView()
         {
             InitializeComponent();
         }

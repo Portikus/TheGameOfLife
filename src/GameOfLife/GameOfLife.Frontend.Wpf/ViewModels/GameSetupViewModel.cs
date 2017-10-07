@@ -27,8 +27,8 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
             _eventAggregator = eventAggregator;
             _gameManager = gameManager ?? throw new ArgumentNullException(nameof(gameManager));
 
-            Players = new ObservableCollection<Player>();
-            GameConfiguration = new GameConfiguration();
+            Players = new ObservableCollection<Player> {new Player {Name = "Jonas"}, new Player {Name = "Florian"}};
+            GameConfiguration = new GameConfiguration {MapHeight = 20, MapWidth = 20};
 
             _startGameCommand = new DelegateCommand(StartGameCommandExecuteMethod, StartGameCommandCanExecuteMethod);
             _addPlayerCommand = new DelegateCommand(AddNewPlayerCommandExecute);
