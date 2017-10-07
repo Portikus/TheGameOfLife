@@ -139,7 +139,7 @@ namespace GameOfLife.Backend
                 }
 
 
-                if (presentNeighbours >= neighboursNeeded && dontNeedThatMany <= presentNeighbours)
+                if (presentNeighbours >= neighboursNeeded && presentNeighbours <= dontNeedThatMany)
                 {
                     playerWantsHere.Add(true);
                 }
