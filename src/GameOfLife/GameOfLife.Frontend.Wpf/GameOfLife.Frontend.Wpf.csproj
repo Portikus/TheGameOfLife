@@ -83,6 +83,7 @@
     <Compile Include="Mocks\GameManagerMock.cs" />
     <Compile Include="Model\PlayerProvider.cs" />
     <Compile Include="NeighborConverter.cs" />
+    <Compile Include="TestConverter.cs" />
     <Compile Include="TileToColorConverter.cs" />
     <Compile Include="ViewModels\GameMapViewModel.cs" />
     <Compile Include="ViewModels\GameViewModel.cs" />
