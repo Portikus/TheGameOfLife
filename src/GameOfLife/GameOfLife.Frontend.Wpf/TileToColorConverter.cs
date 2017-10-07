@@ -27,15 +27,15 @@ namespace GameOfLife.Frontend.Wpf
 
         private object GetTemperatureColor(Temperature temperature)
         {
-            var red = temperature.Value < temperature.MedianValue ? 0 : byte.MaxValue;
-            var blue = temperature.Value > temperature.MedianValue ? 0 : byte.MaxValue;
+            var red = temperature.Value <= temperature.MedianValue ? 0 : byte.MaxValue;
+            var blue = temperature.Value >= temperature.MedianValue ? 0 : byte.MaxValue;
             
-            var minMedianDifference = Math.Abs(temperature.Minimum - temperature.MedianValue);
-            var maxMedianDifference = Math.Abs(temperature.Maximum - temperature.MedianValue);
-            var valueMedianDifference = Math.Abs(Math.Abs(temperature.MedianValue) - Math.Abs(temperature.Value));
-            var factor = temperature.Value < temperature.MedianValue
-                ? valueMedianDifference / minMedianDifference
-                : valueMedianDifference / maxMedianDifference;
+            var medianBorderDifference = Math.Abs(temperature.Minimum - temperature.MedianValue);
+            var valueMedianDifference = temperature.Value < 0
+                ? Math.Abs(Math.Abs(temperature.MedianValue) + (Math.Abs(temperature.Value)))
+                : Math.Abs(Math.Abs(temperature.MedianValue) - (Math.Abs(temperature.Value)));
+
+            var factor =  valueMedianDifference / medianBorderDifference;
             var alpha = factor * byte.MaxValue;
 
             return new SolidColorBrush(new Color
