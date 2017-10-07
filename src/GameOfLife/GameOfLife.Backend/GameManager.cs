@@ -259,7 +259,7 @@ namespace GameOfLife.Backend
 
         public void VisualizeGamestate(GameMap map)
         {
-#if DEBUG
+        #if DEBUG
             Debug.WriteLine("===============================================================");
             Debug.WriteLine("Visualizing Game State");
             for (int i = 0; i < map.Tiles.Length; i++)
@@ -278,7 +278,7 @@ namespace GameOfLife.Backend
                 }
                 Debug.WriteLine("");
             }
-#endif
+        #endif
         }
 
         private ICollection<HotSpot> GenerateHotSpots(int width, int height)
@@ -293,7 +293,7 @@ namespace GameOfLife.Backend
                     X = _random.Next(0, width),
                     Y = _random.Next(0, height),
                     Temperature = _random.Next(Temperature.MinTemperature, Temperature.MaxTemperature),
-                    FallOffFactor = 2
+                    FallOffDistance = 4
                 });
             }
             return result;
@@ -307,13 +307,13 @@ namespace GameOfLife.Backend
 
         private double CalculateTemperatureForHotSpot(int x, int y, HotSpot spot)
         {
-            return spot.Temperature - (spot.Temperature / (_gameMapDiagonal / spot.FallOffFactor) *
+            return spot.Temperature - (spot.Temperature / spot.FallOffDistance *
                                        CalculatePytagoras(spot.X - x, spot.Y - y));
         }
 
         private double CalculatePytagoras(int x, int y)
         {
-            return Math.Sqrt(x * x, y * y);
+            return Math.Sqrt(x * x + y * y);
         }
 
         private class HotSpot
@@ -321,7 +321,7 @@ namespace GameOfLife.Backend
             public int X { get; set; }
             public int Y { get; set; }
             public int Temperature { get; set; }
-            public int FallOffFactor { get; set; }
+            public int FallOffDistance { get; set; }
         }
 
         protected virtual void RaiseGameFinishedEvent(GameFinishedEventArgs e)
