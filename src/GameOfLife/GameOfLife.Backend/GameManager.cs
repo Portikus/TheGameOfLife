@@ -282,7 +282,7 @@ namespace GameOfLife.Backend
         {
             var result = new List<HotSpot>();
             int tileCount = width * height;
-            int hotSpotCount = _random.Next(tileCount / 100, tileCount / 20);
+            int hotSpotCount = _random.Next(tileCount / 1000, tileCount / 200);
             for (int i = 0; i < hotSpotCount; i++)
             {
                 result.Add(new HotSpot()
