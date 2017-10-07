@@ -15,6 +15,7 @@
             Width="150"
             Margin="10"
             DockPanel.Dock="Left">
+            <local:EntityAttributesView HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <Button
                 Margin="3"
                 Padding="5"
