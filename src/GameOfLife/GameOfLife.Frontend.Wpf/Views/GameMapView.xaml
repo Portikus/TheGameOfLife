@@ -38,9 +38,9 @@
                                 BorderBrush="Black"
                                 Command="{Binding ElementName=GameMapViewControl, Path=DataContext.TileSelectedCommand}"
                                 CommandParameter="{Binding}"
-                                Content="{Binding DebugHighlight,Converter={StaticResource TestConverter}}">
+                                Content="{Binding DebugHighlight, Converter={StaticResource TestConverter}}">
                                 <Button.BorderThickness>
-                                    <MultiBinding  Converter="{StaticResource NeighborConverter}">
+                                    <MultiBinding Converter="{StaticResource NeighborConverter}">
                                         <Binding Path="Entity" />
                                     </MultiBinding>
                                 </Button.BorderThickness>
@@ -50,6 +50,9 @@
                                         <Binding Path="Temperature" />
                                     </MultiBinding>
                                 </Button.Background>
+                                <Button.ToolTip>
+                                    <ToolTip Content="{Binding Temperature.Value}" />
+                                </Button.ToolTip>
                             </Button>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
