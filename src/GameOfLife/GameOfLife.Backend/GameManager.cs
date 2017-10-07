@@ -115,7 +115,7 @@ namespace GameOfLife.Backend
                 {
                     var newTile = new Tile()
                     {
-                        TileAttributes = GameMap.Tiles[j][k].TileAttributes
+                        //TileAttributes = GameMap.Tiles[j][k].TileAttributes
                     };
                     newGameMap.Tiles[j][k] = newTile;
                     var neighbours = getLivingNeighbours(j, k);

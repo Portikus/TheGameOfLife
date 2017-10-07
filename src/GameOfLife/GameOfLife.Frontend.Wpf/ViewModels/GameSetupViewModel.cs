@@ -37,7 +37,7 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                 //new Player {Name = "Jannik"},
                 //new Player {Name = "Sebastian"}
             };
-            GameConfiguration = new GameConfiguration {MapHeight = 20, MapWidth = 20, GenerationsPerRound = 1};
+            GameConfiguration = new GameConfiguration {MapHeight = 100, MapWidth = 100, GenerationsPerRound = 1};
 
             _startGameCommand = new DelegateCommand(StartGameCommandExecuteMethod, StartGameCommandCanExecuteMethod);
             _addPlayerCommand = new DelegateCommand(AddNewPlayerCommandExecute);

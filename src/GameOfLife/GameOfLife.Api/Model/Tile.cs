@@ -21,6 +21,7 @@
         public Tile()
         {
             Temperature = new Temperature();
+            Temperature.PropertyChanged += (sender, args) => RaisePropertyChanged(nameof(Temperature));
         }
 
         public override string ToString()
