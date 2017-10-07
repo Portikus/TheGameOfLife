@@ -7,7 +7,7 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
     public class ShellViewModel : BindableBase
     {
         public GameSetupViewModel GameSetupViewModel { get; }
-        public GameMapViewModel GameMapViewModel { get; }
+        public GameViewModel GameViewModel { get; }
         private bool _gameStarted;
 
         public bool GameStarted
@@ -21,10 +21,10 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
         }
         
 
-        public ShellViewModel(IEventAggregator eventAggregator, GameSetupViewModel gameSetupViewModel, GameMapViewModel gameMapViewModel)
+        public ShellViewModel(IEventAggregator eventAggregator, GameSetupViewModel gameSetupViewModel, GameViewModel gameViewModel)
         {
             GameSetupViewModel = gameSetupViewModel;
-            GameMapViewModel = gameMapViewModel;
+            GameViewModel = gameViewModel;
             eventAggregator.GetEvent<GameStartedEvent>().Subscribe(OnGameStarted);
         }
 

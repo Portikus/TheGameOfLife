@@ -79,12 +79,15 @@
     <Compile Include="BoolToVisibleConverter.cs" />
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Mocks\GameManagerMock.cs" />
-    <Compile Include="ViewModels\GameMapViewModel.cs" />
+    <Compile Include="ViewModels\GameViewModel.cs" />
     <Compile Include="ViewModels\GameSetupViewModel.cs" />
     <Compile Include="Events\GameStartedEvent.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
-    <Compile Include="Views\GameMapView.xaml.cs">
-      <DependentUpon>GameMapView.xaml</DependentUpon>
+    <Compile Include="Views\GameMap.xaml.cs">
+      <DependentUpon>GameMap.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\GammeView.xaml.cs">
+      <DependentUpon>GammeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\GameSetupView.xaml.cs">
       <DependentUpon>GameSetupView.xaml</DependentUpon>
@@ -121,7 +124,11 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Views\GameMapView.xaml">
+    <Page Include="Views\GameMap.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\GammeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

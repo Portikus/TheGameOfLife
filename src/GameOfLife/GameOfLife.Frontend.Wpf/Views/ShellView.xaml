@@ -16,15 +16,15 @@
     mvvm:ViewModelLocator.AutoWireViewModel="True"
     mc:Ignorable="d">
     <Grid>
-        <views:GameMapView DataContext="{Binding GameMapViewModel}">
-            <views:GameMapView.Visibility>
+        <views:GammeView DataContext="{Binding GameViewModel}">
+            <views:GammeView.Visibility>
                 <Binding ElementName="ShellViewView" Path="DataContext.GameStarted">
                     <Binding.Converter>
                         <wpf:BoolToVisibleConverter />
                     </Binding.Converter>
                 </Binding>
-            </views:GameMapView.Visibility>
-        </views:GameMapView>
+            </views:GammeView.Visibility>
+        </views:GammeView>
         <views:GameSetupView DataContext="{Binding GameSetupViewModel}">
             <views:GameSetupView.Visibility>
                 <Binding ElementName="ShellViewView" Path="DataContext.GameStarted">
@@ -36,3 +36,6 @@
         </views:GameSetupView>
     </Grid>
 </Window>
+
+
+

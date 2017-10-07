@@ -1,6 +1,6 @@
 ﻿namespace GameOfLife.Frontend.Wpf.ViewModels
 {
-    public class GameMapViewModel
+    public class GameViewModel
     {
         
     }
