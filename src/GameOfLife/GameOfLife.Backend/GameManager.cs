@@ -65,6 +65,7 @@ namespace GameOfLife.Backend
             PlayerList = new List<Player>();
             _clearTiles = new List<Coordinate>();
             _playerConfigs = new List<PlayerConfiguration>();
+            _started = false;
         }
 
         public void AddPlayer(PlayerConfiguration configuration)
@@ -92,9 +93,9 @@ namespace GameOfLife.Backend
         {
             if (playerActions.Count() != PlayerList.Count)
             {
-                throw new ArgumentException("The Amount of Player Actions didn't match the Amount of Players", nameof(playerActions));
+                throw new ArgumentException("The amount of playeractions didn't match the amount of players", nameof(playerActions));
             }
-            for (int i = 0; i < GenerationPerRound; i++)
+            for (int i = 0; i <t GenerationPerRound; i++)
             {
                 SimulateGeneration();
             }
