@@ -156,7 +156,8 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                     }
                     if (Players.Any(x => x.Name == result.PlayerName) == false)
                     {
-                        Players.Add(new Player(){Name = result.PlayerName});
+                        Players.Add(new Player {Name = result.PlayerName});
+                        _startGameCommand.RaiseCanExecuteChanged();
                     }
                 }
             }

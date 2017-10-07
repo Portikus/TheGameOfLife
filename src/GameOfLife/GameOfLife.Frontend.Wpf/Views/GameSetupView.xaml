@@ -44,10 +44,10 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <TextBox
+                        <Label
                             Margin="3"
-                            FontSize="15"
-                            Text="{Binding Name}" />
+                            Content="{Binding Name}"
+                            FontSize="15" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
