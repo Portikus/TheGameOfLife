@@ -11,7 +11,7 @@ namespace GameOfLife.Api
         event EventHandler<GameFinishedEventArgs> GameFinished;
         GameMap GenerateGameMap(GameConfiguration gameConfiguration);
         void Start();
-        void AddPlayer(PlayerConfiguration player);
+        void AddPlayer(PlayerConfiguration configuration);
         void SimulateRound(IEnumerable<PlayerAction> playerActions);
     }
 }
