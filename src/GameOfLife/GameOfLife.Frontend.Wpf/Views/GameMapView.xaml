@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mvvm="http://prismlibrary.com/"
     xmlns:viewModels="clr-namespace:GameOfLife.Frontend.Wpf.ViewModels"
+    x:Name="GameMapViewControl"
     d:DataContext="{d:DesignInstance viewModels:GameMapViewModel}"
     d:DesignHeight="300"
     d:DesignWidth="300"
@@ -28,7 +29,12 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Button Width="20" Height="20" Margin="2"/>
+                            <Button
+                                Width="20"
+                                Height="20"
+                                Margin="2"
+                                Command="{Binding ElementName=GameMapViewControl, Path=DataContext.TileSelectedCommand}"
+                                CommandParameter="{Binding}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

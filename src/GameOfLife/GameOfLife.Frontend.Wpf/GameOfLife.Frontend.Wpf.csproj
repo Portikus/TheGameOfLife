@@ -79,6 +79,7 @@
     <Compile Include="BoolToVisibleConverter.cs" />
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Mocks\GameManagerMock.cs" />
+    <Compile Include="Model\PlayerProvider.cs" />
     <Compile Include="ViewModels\GameMapViewModel.cs" />
     <Compile Include="ViewModels\GameViewModel.cs" />
     <Compile Include="ViewModels\GameSetupViewModel.cs" />
