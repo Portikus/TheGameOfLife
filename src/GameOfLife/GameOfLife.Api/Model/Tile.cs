@@ -1,15 +1,14 @@
-﻿using System.Collections.Generic;
-
-namespace GameOfLife.Api.Model
+﻿namespace GameOfLife.Api.Model
 {
-    public class Tile :ModelBase
+    public class Tile : ModelBase
     {
         private Entity _entity;
-        public IDictionary<TileAttribute, int> TileAttributes { get; set; }
+
+        public Temperature Temperature { get; }
 
         public Entity Entity
         {
-            get { return _entity; }
+            get => _entity;
             set
             {
                 _entity = value;
@@ -18,6 +17,11 @@ namespace GameOfLife.Api.Model
         }
 
         public bool IsAlive => Entity != null;
+
+        public Tile()
+        {
+            Temperature = new Temperature();
+        }
 
         public override string ToString()
         {
