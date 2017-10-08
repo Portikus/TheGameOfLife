@@ -26,7 +26,16 @@
                 Content="Your name"
                 DockPanel.Dock="Top"
                 FontSize="20" />
-            <TextBox DockPanel.Dock="Top" Text="{Binding PlayerName}" />
+            <TextBox
+                Margin="3"
+                DockPanel.Dock="Top"
+                IsEnabled="{Binding NameNotSet}"
+                Text="{Binding PlayerName}" />
+            <Button
+                Margin="3"
+                Command="{Binding StartHeartbeatsCommand}"
+                Content="Go into Lobby"
+                DockPanel.Dock="Top" />
             <Label
                 HorizontalAlignment="Center"
                 Content="Available Players"
@@ -44,10 +53,17 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Label
-                            Margin="3"
-                            Content="{Binding Name}"
-                            FontSize="15" />
+                        <StackPanel>
+                            <Label
+                                Margin="3"
+                                Content="{Binding Name}"
+                                FontSize="15" />
+                            <Label
+                                Margin="3"
+                                Content="{Binding IpAddress}"
+                                FontSize="15" />
+                            <CheckBox Content="IsHost" IsChecked="{Binding IsHost}" />
+                        </StackPanel>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

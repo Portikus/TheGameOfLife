@@ -1,23 +1,42 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Threading;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Xml.Serialization;
 using GameOfLife.Api;
 using GameOfLife.Api.Model;
 using GameOfLife.Frontend.Wpf.Events;
 using GameOfLife.Frontend.Wpf.Model;
 using Prism.Commands;
 using Prism.Events;
+using Prism.Mvvm;
 
 namespace GameOfLife.Frontend.Wpf.ViewModels
 {
-    public class GameViewModel
+    public class GameViewModel : BindableBase
     {
         private readonly DelegateCommand _endTurnCommand;
+        private readonly List<PlayerAction> _myPlayerActions = new List<PlayerAction>();
+
+        private readonly List<PlayerAction> otherPlayerActions = new List<PlayerAction>();
+        private string _status;
         public IGameManager GameManager { get; }
-        private readonly List<PlayerAction> _playerActions = new List<PlayerAction>();
         public PlayerProvider PlayerProvider { get; }
+
+        public string Status
+        {
+            get => _status;
+            set
+            {
+                _status = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public ICommand EndTurnCommand => _endTurnCommand;
 
@@ -28,17 +47,25 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
             GameManager = gameManager;
             PlayerProvider = playerProvider;
             GameMapViewModel = gameMapViewModel;
-            _endTurnCommand = new DelegateCommand(async ()=> await EndTurnExecuteMethod());
+            _endTurnCommand = new DelegateCommand(EndTurnExecuteMethod);
 
             eventAggregator.GetEvent<GameStartedEvent>().Subscribe(OnGameStarted);
         }
 
         private void OnGameStarted()
         {
-            PlayerProvider.CurrentPlayer = PlayerProvider.Players.First();
+            if (PlayerProvider.CurrentPlayer.IsHost)
+            {
+                RunHost();
+            }
+            else
+            {
+                RunClient();
+            }
         }
 
-        private async Task EndTurnExecuteMethod()
+
+        private void EndTurnExecuteMethod()
         {
             if (GameManager.Started == false)
             {
@@ -50,7 +77,6 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                 }
             }
             GeneratePlayerActions();
-            await SelectNextPlayer();
         }
 
         private void RemoveInitialSetup()
@@ -65,28 +91,9 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
             }
         }
 
-        private async Task SelectNextPlayer()
+        private void OneRound(IEnumerable<PlayerAction> playerActions)
         {
-            var currentPlayerIndex = PlayerProvider.Players.IndexOf(PlayerProvider.CurrentPlayer);
-            if (currentPlayerIndex == PlayerProvider.Players.Count - 1)
-            {
-                PlayerProvider.CurrentPlayer = PlayerProvider.Players.First();
-                await OneRound();
-            }
-            else
-            {
-                PlayerProvider.CurrentPlayer = PlayerProvider.Players[currentPlayerIndex + 1];
-            }
-        }
-
-        private async Task OneRound()
-        {
-            for (int i = 0; i < 10; i++)
-            {
-                GameManager.SimulateGeneration(_playerActions);
-                await Task.Delay(200);
-            }
-            _playerActions.Clear();
+            GameManager.SimulateGeneration(playerActions);
         }
 
         private void GenerateInitialPlayerSetup()
@@ -120,7 +127,144 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
 
         private void GeneratePlayerActions()
         {
-            _playerActions.Add(new PlayerAction {Player = PlayerProvider.CurrentPlayer});
+            lock (this)
+            {
+                _myPlayerActions.Add(new PlayerAction {Player = PlayerProvider.CurrentPlayer});
+            }
+        }
+
+        private void RunClient()
+        {
+            Task.Run(ReceivePlayerActions);
+            Task.Run(SendPlayerActionsToHost);
+        }
+
+        private void RunHost()
+        {
+            Task.Run(ReceivePlayerActions);
+            Task.Run(SendPlayerActionsToClients);
+        }
+
+        private async Task SendPlayerActionsToHost()
+        {
+            try
+            {
+                var senderUdpClient = new UdpClient();
+                while (GameManager.Started)
+                {
+                    await Task.Delay(1000);
+                    List<PlayerAction> playerActions;
+                    lock (this)
+                    {
+                        if (_myPlayerActions.Any())
+                        {
+                            continue;
+                        }
+
+                        playerActions = new List<PlayerAction>(_myPlayerActions);
+                        _myPlayerActions.Clear();
+                    }
+                    var playerActionsProvider = new PlayerActionsProvider
+                    {
+                        PlayerActions = playerActions
+                    };
+                    var xmlSerializer = new XmlSerializer(playerActionsProvider.GetType());
+
+                    using (var textWriter = new StringWriter())
+                    {
+                        xmlSerializer.Serialize(textWriter, playerActionsProvider);
+                        var txt = textWriter.ToString();
+                        var toBytes = Encoding.UTF8.GetBytes(txt);
+                        await senderUdpClient.SendAsync(toBytes, toBytes.Length, new IPEndPoint(PlayerProvider.Players.First(x => x.IsHost).IpAddress, 10001));
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Status = e.ToString();
+            }
+        }
+
+        private async Task SendPlayerActionsToClients()
+        {
+            try
+            {
+                var senderUdpClient = new UdpClient();
+                while (GameManager.Started)
+                {
+                    await Task.Delay(1000);
+                    List<PlayerAction> playerActions;
+                    lock (this)
+                    {
+                        if (_myPlayerActions.Any())
+                        {
+                            continue;
+                        }
+                        playerActions = new List<PlayerAction>(otherPlayerActions);
+                        otherPlayerActions.Clear();
+                        playerActions.AddRange(_myPlayerActions);
+                        _myPlayerActions.Clear();
+                    }
+                    var playerActionsProvider = new PlayerActionsProvider
+                    {
+                        PlayerActions = playerActions
+                    };
+                    var xmlSerializer = new XmlSerializer(playerActionsProvider.GetType());
+
+                    using (var textWriter = new StringWriter())
+                    {
+                        xmlSerializer.Serialize(textWriter, playerActionsProvider);
+                        var txt = textWriter.ToString();
+                        var toBytes = Encoding.UTF8.GetBytes(txt);
+                        foreach (var ip in PlayerProvider.Players.Where(x => !x.IsHost).Select(x => x.IpAddress))
+                        {
+                            await senderUdpClient.SendAsync(toBytes, toBytes.Length, new IPEndPoint(ip, 10001));
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Status = e.ToString();
+            }
+        }
+
+        private async Task ReceivePlayerActions()
+        {
+            try
+            {
+                var receiverUdpClient = new UdpClient(100001);
+                while (GameManager.Started)
+                {
+                    var data = await receiverUdpClient.ReceiveAsync();
+                    var str = Encoding.UTF8.GetString(data.Buffer);
+                    var serializer = new XmlSerializer(typeof(PlayerActionsProvider));
+                    PlayerActionsProvider result;
+                    using (TextReader reader = new StringReader(str))
+                    {
+                        result = serializer.Deserialize(reader) as PlayerActionsProvider;
+                    }
+                    if (result == null)
+                    {
+                        Status = "Fehler";
+                        continue;
+                    }
+                    if (PlayerProvider.CurrentPlayer.IsHost)
+                    {
+                        otherPlayerActions.AddRange(result.PlayerActions);
+                    }
+                    OneRound(otherPlayerActions.Where(x => x.Player.Name != PlayerProvider.CurrentPlayer.Name));
+                }
+            }
+            catch (Exception e)
+            {
+                Status = e.ToString();
+            }
+        }
+
+        public class PlayerActionsProvider
+        {
+            public List<PlayerAction> PlayerActions { get; set; }
         }
     }
 }
