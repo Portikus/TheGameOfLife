@@ -15,8 +15,8 @@ namespace GameOfLife.Api.Model
         {
             StartAttributes = new Dictionary<EntityAttribute, int>
             {
-                [EntityAttribute.MaxNeighboursForDead] = 3,
-                [EntityAttribute.MaxNeighboursForLife] = 3,
+                [EntityAttribute.MaxNeighboursForDead] = 6,
+                [EntityAttribute.MaxNeighboursForLife] = 7,
                 [EntityAttribute.MinNeighboursForDead] = 3,
                 [EntityAttribute.MinNeighboursForLife] = 2
             };

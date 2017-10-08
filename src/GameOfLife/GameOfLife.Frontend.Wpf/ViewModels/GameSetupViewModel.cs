@@ -173,6 +173,10 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                         Status = "Fehler";
                         continue;
                     }
+                    if (IsHost == false)
+                    {
+                        GameConfiguration.Seed = result.Seed;
+                    }
                     if (Players.Any(x => x.Name == result.PlayerName) == false)
                     {
                         Players.Add(new Player {Name = result.PlayerName, IpAddress = data.RemoteEndPoint.Address});
