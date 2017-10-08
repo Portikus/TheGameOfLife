@@ -6,8 +6,8 @@ namespace GameOfLife.Api.Model
 {
     public class PlayerConfiguration
     {
-        public IDictionary<EntityAttribute, int> StartAttributes{ get; set; }
-        public IEnumerable<Coordinate> Coordinates { get; set; }
+        public Dictionary<EntityAttribute, int> StartAttributes{ get; set; }
+        public List<Coordinate> Coordinates { get; set; }
         public Player Player { get; set; }
     }
 }

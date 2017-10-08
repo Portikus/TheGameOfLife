@@ -32,8 +32,8 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Top"
                 Content="{Binding PlayerProvider.CurrentPlayer.Name}"
-                Foreground="{Binding PlayerProvider.CurrentPlayer.Name, Converter={StaticResource StringToColorConverter}}"
-                FontSize="20" />
+                FontSize="20"
+                Foreground="{Binding PlayerProvider.CurrentPlayer.Name, Converter={StaticResource StringToColorConverter}}" />
         </Grid>
         <DockPanel>
             <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
