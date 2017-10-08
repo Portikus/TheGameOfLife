@@ -185,11 +185,13 @@ namespace GameOfLife.Backend
             }
             if (playerWantsHere.Count(b => b) == 1)
             {
-                newGameMap.Tiles[j][k].Entity = new Entity()
+                var entity = new Entity()
                 {
                     EntityAttributes = newAttribute,
                     Owner = PlayerList[playerWantsHere.IndexOf(true)]
                 };
+                newGameMap.Tiles[j][k].Entity = entity;
+                entity.Owner.Score++;
             }
         }
 
