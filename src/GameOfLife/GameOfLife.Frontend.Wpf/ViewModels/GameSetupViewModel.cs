@@ -127,6 +127,10 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                         continue;
                     }
                     var heartBeat = new HeartBeat {PlayerName = PlayerName};
+                    if (IsHost)
+                    {
+                        heartBeat.Seed = GameConfiguration.Seed;
+                    }
                     var xmlSerializer = new XmlSerializer(heartBeat.GetType());
 
                     using (var textWriter = new StringWriter())
@@ -186,5 +190,6 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
     public class HeartBeat
     {
         public string PlayerName { get; set; }
+        public int Seed { get; set; }
     }
 }

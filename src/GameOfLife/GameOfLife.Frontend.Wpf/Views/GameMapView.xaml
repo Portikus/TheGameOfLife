@@ -34,12 +34,12 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Button
-                                Width="15"
-                                Height="15"
-                                BorderBrush="Black"
-                                Command="{Binding ElementName=GameMapViewControl, Path=DataContext.TileSelectedCommand}"
-                                CommandParameter="{Binding}"
-                                Content="{Binding DebugHighlight, Converter={StaticResource TestConverter}}">
+                                    Width="15"
+                                    Height="15"
+                                    BorderBrush="Black"
+                                    Command="{Binding ElementName=GameMapViewControl, Path=DataContext.TileSelectedCommand}"
+                                    CommandParameter="{Binding}"
+                                    Content="{Binding DebugHighlight, Converter={StaticResource TestConverter}}">
                                     <Button.BorderThickness>
                                         <MultiBinding Converter="{StaticResource NeighborConverter}">
                                             <Binding Path="Entity" />

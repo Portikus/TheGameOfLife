@@ -118,14 +118,14 @@
                     Grid.Column="0"
                     Margin="3"
                     FontSize="15"
-                    Text="Generations per round: " />
+                    Text="Seed: " />
                 <TextBox
                     Grid.Row="2"
                     Grid.Column="1"
                     Width="30"
                     Margin="3"
                     FontSize="15"
-                    Text="{Binding GenerationsPerRound}" />
+                    Text="{Binding Seed}" />
             </Grid>
         </DockPanel>
     </DockPanel>
