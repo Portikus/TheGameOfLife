@@ -91,11 +91,6 @@ namespace GameOfLife.Backend
 
         public void SimulateGeneration(IEnumerable<PlayerAction> playerActions)
         {
-            if (playerActions.Count() != PlayerList.Count)
-            {
-                throw new ArgumentException("The amount of playeractions didn't match the amount of players", nameof(playerActions));
-            }
-
             GameMap newGameMap = new GameMap();
             newGameMap.Tiles = new Tile[GameMap.Tiles.Length][];
 

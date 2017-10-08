@@ -230,10 +230,6 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                     List<PlayerAction> playerActions;
                     lock (this)
                     {
-                        if (_myPlayerActions.Any())
-                        {
-                            continue;
-                        }
                         playerActions = new List<PlayerAction>(_otherPlayerActions);
                         _otherPlayerActions.Clear();
                         playerActions.AddRange(_myPlayerActions);
