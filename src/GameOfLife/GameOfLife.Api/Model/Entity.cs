@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace GameOfLife.Api.Model
 {
@@ -7,6 +8,7 @@ namespace GameOfLife.Api.Model
         public double IdealTemperature { get; set; }
         public double Efficiency { get; set; }
         public double Resitance { get; set; }
+        [XmlIgnore]
         public Dictionary<EntityAttribute, int> EntityAttributes { get; set; }
         public Player Owner { get; set; }
         public NeighborInfo NeighborInfo { get; }
