@@ -288,7 +288,6 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                         }
                         PlayerProvider.PlayerConfigurations.Add(config);
                     }
-                    PlayerProvider.PlayerConfigurations.AddRange(result.PlayerConfiguration);
 
                     if (PlayerProvider.Players.Count == PlayerProvider.PlayerConfigurations.Count)
                     {
