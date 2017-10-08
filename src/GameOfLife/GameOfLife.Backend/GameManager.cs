@@ -161,7 +161,7 @@ namespace GameOfLife.Backend
         {
             public double CombatSkill { get; set; }
             public Player Player { get; set; }
-            public IDictionary<EntityAttribute, int> NewAttributes { get; set; }
+            public Dictionary<EntityAttribute, int> NewAttributes { get; set; }
             public Entity AttackingEntity { get; set; }
         }
 
@@ -224,7 +224,7 @@ namespace GameOfLife.Backend
             if(currentTile.IsAlive && CanSurvive(currentTile, enumerable.Count(t => t.IsAlive && t.Entity.Owner == currentTile.Entity.Owner)))
             {
                 var defendingSkill = CalculateHeatResistance(currentTile.Entity, currentTile);
-                if (successfulDemand == null || successfulDemand.CombatSkill < defendingSkill || successfulDemand.Player == currentTile.Entity.Ow)
+                if (successfulDemand == null || successfulDemand.CombatSkill < defendingSkill || successfulDemand.Player == currentTile.Entity.Owner)
                 {
                     newGameMap.Tiles[j][k].Entity = currentTile.Entity;
                     return;
