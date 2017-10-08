@@ -222,7 +222,7 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                             await senderUdpClient.SendAsync(toBytes, toBytes.Length, new IPEndPoint(ip, 10001));
                         }
                     }
-                    GameManager.Start();
+                    StartGame();
                 }
                 while (GameManager.Started)
                 {
@@ -251,6 +251,7 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                             await senderUdpClient.SendAsync(toBytes, toBytes.Length, new IPEndPoint(ip, 10001));
                         }
                     }
+                    OneRound(_otherPlayerActions.Where(x => x.Player.Name != PlayerProvider.CurrentPlayer.Name));
                 }
             }
             catch (Exception e)
@@ -285,7 +286,7 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                     {
                         if (PlayerProvider.CurrentPlayer.IsHost == false)
                         {
-                            GameManager.Start();
+                            StartGame();
                         }
                     }
                 }
@@ -308,13 +309,25 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                     {
                         _otherPlayerActions.AddRange(result.PlayerActions);
                     }
-                    OneRound(_otherPlayerActions.Where(x => x.Player.Name != PlayerProvider.CurrentPlayer.Name));
+                    else
+                    {
+                        OneRound(_otherPlayerActions.Where(x => x.Player.Name != PlayerProvider.CurrentPlayer.Name));
+                    }
                 }
             }
             catch (Exception e)
             {
                 Status = e.ToString();
             }
+        }
+
+        private void StartGame()
+        {
+            foreach (var playerConfiguration in PlayerProvider.PlayerConfigurations)
+            {
+                GameManager.AddPlayer(playerConfiguration);
+            }
+            GameManager.Start();
         }
 
         public class PlayerActionsProvider
