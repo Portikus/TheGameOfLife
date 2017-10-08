@@ -12,6 +12,7 @@
     d:DesignWidth="300"
     mc:Ignorable="d">
     <DockPanel Margin="10">
+        <Label Content="{Binding Status}" DockPanel.Dock="Bottom" />
         <Grid DockPanel.Dock="Bottom">
             <Button
                 Padding="5"
@@ -22,7 +23,22 @@
         <DockPanel DockPanel.Dock="Left">
             <Label
                 HorizontalAlignment="Center"
-                Content="Players"
+                Content="Your name"
+                DockPanel.Dock="Top"
+                FontSize="20" />
+            <TextBox
+                Margin="3"
+                DockPanel.Dock="Top"
+                IsEnabled="{Binding NameNotSet}"
+                Text="{Binding PlayerName}" />
+            <Button
+                Margin="3"
+                Command="{Binding StartHeartbeatsCommand}"
+                Content="Go into Lobby"
+                DockPanel.Dock="Top" />
+            <Label
+                HorizontalAlignment="Center"
+                Content="Available Players"
                 DockPanel.Dock="Top"
                 FontSize="20" />
             <ItemsControl
@@ -37,16 +53,21 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <TextBox
-                            Width="100"
-                            Margin="3"
-                            FontSize="15"
-                            Text="{Binding Name}" />
+                        <StackPanel>
+                            <Label
+                                Margin="3"
+                                Content="{Binding Name}"
+                                FontSize="15" />
+                            <Label
+                                Margin="3"
+                                Content="{Binding IpAddress}"
+                                FontSize="15" />
+                            <CheckBox Content="IsHost" IsChecked="{Binding IsHost}" />
+                        </StackPanel>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
             <Button
-                Width="100"
                 VerticalAlignment="Top"
                 Command="{Binding AddPlayerCommand}"
                 Content="+"

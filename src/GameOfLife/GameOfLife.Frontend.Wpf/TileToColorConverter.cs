@@ -28,13 +28,13 @@ namespace GameOfLife.Frontend.Wpf
         {
             var red = temperature.Value <= temperature.MedianValue ? 0 : byte.MaxValue;
             var blue = temperature.Value >= temperature.MedianValue ? 0 : byte.MaxValue;
-            
+
             var medianBorderDifference = Math.Abs(temperature.Minimum - temperature.MedianValue);
             var valueMedianDifference = temperature.Value < 0
-                ? Math.Abs(Math.Abs(temperature.MedianValue) + (Math.Abs(temperature.Value)))
-                : Math.Abs(Math.Abs(temperature.MedianValue) - (Math.Abs(temperature.Value)));
+                ? Math.Abs(Math.Abs(temperature.MedianValue) + Math.Abs(temperature.Value))
+                : Math.Abs(Math.Abs(temperature.MedianValue) - Math.Abs(temperature.Value));
 
-            var factor =  valueMedianDifference / medianBorderDifference;
+            var factor = valueMedianDifference / medianBorderDifference;
             var alpha = factor * byte.MaxValue;
 
             return new SolidColorBrush(new Color

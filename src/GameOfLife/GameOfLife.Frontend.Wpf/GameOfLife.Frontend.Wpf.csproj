@@ -91,7 +91,6 @@
     <Compile Include="ViewModels\GameViewModel.cs" />
     <Compile Include="ViewModels\GameSetupViewModel.cs" />
     <Compile Include="Events\GameStartedEvent.cs" />
-    <Compile Include="ViewModels\LobbyViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="Views\GameMapView.xaml.cs">
       <DependentUpon>GameMapView.xaml</DependentUpon>
@@ -101,9 +100,6 @@
     </Compile>
     <Compile Include="Views\GameSetupView.xaml.cs">
       <DependentUpon>GameSetupView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\LobbyView.xaml.cs">
-      <DependentUpon>LobbyView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>
@@ -146,10 +142,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\GameSetupView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\LobbyView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
