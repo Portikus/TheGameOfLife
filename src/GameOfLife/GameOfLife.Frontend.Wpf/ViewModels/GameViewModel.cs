@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using GameOfLife.Api;
@@ -120,7 +119,7 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
 
         private void GeneratePlayerActions()
         {
-            _playerActions.Add(new PlayerAction {Player = PlayerProvider.CurrentPlayer});
+            _playerActions.Add(PlayerProvider.PlayerAction);
         }
     }
 }

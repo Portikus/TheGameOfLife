@@ -8,6 +8,7 @@ namespace GameOfLife.Frontend.Wpf.Model
     {
         private Player _currentPlayer;
         public List<Player> Players { get; }
+        public PlayerAction PlayerAction { get; private set; }
 
         public Player CurrentPlayer
         {
@@ -15,13 +16,20 @@ namespace GameOfLife.Frontend.Wpf.Model
             set
             {
                 _currentPlayer = value;
+                UpdatePlayerActions();
                 RaisePropertyChanged();
             }
+        }
+
+        private void UpdatePlayerActions()
+        {
+            PlayerAction = new PlayerAction() {Player = CurrentPlayer, TemperatureManipulations = new List<TemperatureManipulation>()};
         }
 
         public PlayerProvider()
         {
             Players = new List<Player>();
+            PlayerAction = new PlayerAction();
         }
     }
 }
