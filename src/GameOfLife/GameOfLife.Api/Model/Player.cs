@@ -9,6 +9,6 @@ namespace GameOfLife.Api.Model
         public string Name { get; set; }
         [XmlIgnore]
         public IPAddress IpAddress { get; set; }
-        public PlayerConfiguration PlayerConfiguration { get; set; }
+        //public PlayerConfiguration PlayerConfiguration { get; set; }
     }
 }

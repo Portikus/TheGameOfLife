@@ -1,13 +1,25 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace GameOfLife.Api.Model
 {
     public class PlayerConfiguration
     {
-        public Dictionary<EntityAttribute, int> StartAttributes{ get; set; }
+        [XmlIgnore]
+        public Dictionary<EntityAttribute, int> StartAttributes { get; set; }
+
         public List<Coordinate> Coordinates { get; set; }
         public Player Player { get; set; }
+
+        public PlayerConfiguration()
+        {
+            StartAttributes = new Dictionary<EntityAttribute, int>
+            {
+                [EntityAttribute.MaxNeighboursForDead] = 3,
+                [EntityAttribute.MaxNeighboursForLife] = 3,
+                [EntityAttribute.MinNeighboursForDead] = 3,
+                [EntityAttribute.MinNeighboursForLife] = 2
+            };
+        }
     }
 }

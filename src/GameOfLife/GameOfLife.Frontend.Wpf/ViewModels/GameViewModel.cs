@@ -106,18 +106,11 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                     }
                 }
             }
-            PlayerProvider.CurrentPlayer.PlayerConfiguration = new PlayerConfiguration
+            PlayerProvider.PlayerConfigurations.Add(new PlayerConfiguration
             {
                 Coordinates = playerInitialCoordinates,
-                Player = PlayerProvider.CurrentPlayer,
-                StartAttributes = new Dictionary<EntityAttribute, int>
-                {
-                    [EntityAttribute.MaxNeighboursForDead] = 3,
-                    [EntityAttribute.MaxNeighboursForLife] = 3,
-                    [EntityAttribute.MinNeighboursForDead] = 3,
-                    [EntityAttribute.MinNeighboursForLife] = 2
-                }
-            };
+                Player = PlayerProvider.CurrentPlayer
+            });
         }
 
         private void GeneratePlayerActions()
@@ -188,13 +181,13 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                 while (!GameManager.Started)
                 {
                     await Task.Delay(1000);
-                    if (PlayerProvider.Players.All(x => x.PlayerConfiguration != null))
+                    if (PlayerProvider.Players.Count != PlayerProvider.PlayerConfigurations.Count)
                     {
                         continue;
                     }
                     var configurationsProvider = new PlayerConfigurationsProvider
                     {
-                        PlayerConfiguration = PlayerProvider.Players.Select(x=>x.PlayerConfiguration).ToList()
+                        PlayerConfiguration = PlayerProvider.PlayerConfigurations
                     };
                     var xmlSerializer = new XmlSerializer(configurationsProvider.GetType());
 
@@ -269,9 +262,9 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                         Status = "Fehler";
                         continue;
                     }
-                    PlayerProvider.Players.First(x => x.Name == result.Player.Name).PlayerConfiguration = result;
+                    PlayerProvider.PlayerConfigurations.Add(result);
 
-                    if (PlayerProvider.Players.All(x => x.PlayerConfiguration != null))
+                    if (PlayerProvider.Players.Count != PlayerProvider.PlayerConfigurations.Count)
                     {
                         if (PlayerProvider.CurrentPlayer.IsHost == false)
                         {

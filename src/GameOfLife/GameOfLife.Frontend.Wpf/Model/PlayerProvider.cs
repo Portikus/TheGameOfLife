@@ -11,6 +11,7 @@ namespace GameOfLife.Frontend.Wpf.Model
         private Player _currentPlayer;
         public ObservableCollection<Player> Players { get; }
         public PlayerAction PlayerAction { get; private set; }
+        public List<PlayerConfiguration> PlayerConfigurations { get; set; }
 
         public Player CurrentPlayer
         {
@@ -23,16 +24,17 @@ namespace GameOfLife.Frontend.Wpf.Model
             }
         }
 
-        private void UpdatePlayerActions()
-        {
-            PlayerAction = new PlayerAction() {Player = CurrentPlayer, TemperatureManipulations = new List<TemperatureManipulation>()};
-        }
-
         public PlayerProvider()
         {
             Players = new ObservableCollection<Player>();
             BindingOperations.EnableCollectionSynchronization(Players, this);
             PlayerAction = new PlayerAction();
+        }
+
+        private void UpdatePlayerActions()
+        {
+            PlayerAction = new PlayerAction {Player = CurrentPlayer, TemperatureManipulations = new List<TemperatureManipulation>()};
+            PlayerConfigurations = new List<PlayerConfiguration>();
         }
     }
 }
