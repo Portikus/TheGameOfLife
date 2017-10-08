@@ -7,5 +7,6 @@ namespace GameOfLife.Api.Model
         public bool IsHost { get; set; }
         public string Name { get; set; }
         public IPAddress IpAddress { get; set; }
+        public PlayerConfiguration PlayerConfiguration { get; set; }
     }
 }

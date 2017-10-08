@@ -33,11 +33,11 @@
             <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
                 <Label
                     Margin="5"
-                    Content="Round:"
+                    Content="Started?:"
                     FontSize="15" />
                 <Label
                     Margin="5"
-                    Content="{Binding GameManager.Round}"
+                    Content="{Binding GameManager.Started}"
                     FontSize="15" />
                 <Label
                     Margin="5"
