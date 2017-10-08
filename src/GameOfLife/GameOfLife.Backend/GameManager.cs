@@ -68,6 +68,7 @@ namespace GameOfLife.Backend
 
         public GameMap GenerateGameMap(GameConfiguration gameConfiguration)
         {
+            //_random = new Random(gameConfiguration.Seed);
             _gameMapDiagonal = CalculatePytagoras(gameConfiguration.MapWidth, gameConfiguration.MapHeight);
             _hotSpots = GenerateHotSpots(gameConfiguration.MapWidth, gameConfiguration.MapHeight);
             GameMap = new GameMap { Tiles = new Tile[gameConfiguration.MapWidth][] };
@@ -77,7 +78,7 @@ namespace GameOfLife.Backend
                 for (int j = 0; j < GameMap.Tiles[i].Length; j++)
                 {
                     GameMap.Tiles[i][j] = new Tile();
-                    GameMap.Tiles[i][j].Temperature.Value = CalculateTemperature(i, j);
+                    GameMap.Tiles[i][j].Temperature.Value = CalculateTemperature(i, j, _hotSpots);
                 }
             }
             foreach (var hotSpot in _hotSpots)
@@ -91,10 +92,18 @@ namespace GameOfLife.Backend
 
         public void SimulateGeneration(IEnumerable<PlayerAction> playerActions)
         {
-            if (playerActions.Count() != PlayerList.Count)
+            try
             {
-                throw new ArgumentException("The amount of playeractions didn't match the amount of players", nameof(playerActions));
-            }
+
+                var newHotSpots = new List<HotSpot>();
+                foreach (var playerAction in playerActions)
+                {
+                    /*foreach (var temp in playerAction.TemperatureChange)
+                    {
+                        newHotSpots.Add(Something);
+                    }*/
+                }
+
 
             GameMap newGameMap = new GameMap();
             newGameMap.Tiles = new Tile[GameMap.Tiles.Length][];
@@ -104,21 +113,16 @@ namespace GameOfLife.Backend
                 newGameMap.Tiles[j] = new Tile[GameMap.Tiles[j].Length];
                 for (int k = 0; k < GameMap.Tiles[j].Length; k++)
                 {
-                    var newTile = new Tile()
+                    GameMap.Tiles[j][k].Temperature.Value = CalculateTemperature(j, k, newHotSpots);
+                        var newTile = new Tile()
                     {
                         // hier war was mit Tileattributes
                     };
+
                     newGameMap.Tiles[j][k] = newTile;
                     var neighbours = getLivingNeighbours(j, k);
 
-                    if (GameMap.Tiles[j][k].IsAlive)
-                    {
-                        HandleAliveTile(neighbours, GameMap.Tiles[j][k], newTile);
-                    }
-                    else
-                    {
-                        HandleDeadTile(neighbours, newGameMap, j, k);
-                    }
+                    HandleTile(neighbours, newGameMap, j, k);
                 }
             }
             VisualizeGamestate(newGameMap);
@@ -146,18 +150,37 @@ namespace GameOfLife.Backend
             }
             Generations++;
             RaiseGenerationDoneEvent(new GenerationDoneEventArgs());
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
         }
 
-        private void HandleDeadTile(IEnumerable<Tile> neighbours, GameMap newGameMap, int j, int k)
+        public class PlayerDemand
         {
-            var playerWantsHere = new List<bool>();
-            var newAttribute = new Dictionary<EntityAttribute, int>();
+            public double CombatSkill { get; set; }
+            public Player Player { get; set; }
+            public IDictionary<EntityAttribute, int> NewAttributes { get; set; }
+            public Entity AttackingEntity { get; set; }
+        }
+
+        private void HandleTile(IEnumerable<Tile> neighbours, GameMap newGameMap, int j, int k)
+        {
+            var currentTile = GameMap.Tiles[j][k];
+
+            var playerWantsHere = new List<PlayerDemand>();
+            var enumerable = neighbours as Tile[] ?? neighbours.ToArray();
             for (int i = 0; i < PlayerList.Count; i++)
             {
+                var newAttribute = new Dictionary<EntityAttribute, int>();
                 int neighboursNeeded = 9;
                 int presentNeighbours = 0;
                 int dontNeedThatMany = 0;
-                foreach (var neighbour in neighbours)
+                double maxCombatSkill = 0;
+                Entity attackingEntity = null;
+
+                foreach (var neighbour in enumerable)
                 {
                     if (neighbour.IsAlive && neighbour.Entity.Owner == PlayerList[i])
                     {
@@ -170,38 +193,56 @@ namespace GameOfLife.Backend
                         {
                             newAttribute[entityAttribute.Key] = entityAttribute.Value;
                         }
+                        attackingEntity = neighbour.Entity;
+                        maxCombatSkill = Math.Max(maxCombatSkill, CalculateHeatResistance(neighbour.Entity, GameMap.Tiles[j][k]));
                     }
                 }
 
 
                 if (presentNeighbours >= neighboursNeeded && presentNeighbours <= dontNeedThatMany)
                 {
-                    playerWantsHere.Add(true);
-                }
-                else
-                {
-                    playerWantsHere.Add(false);
+                    playerWantsHere.Add(new PlayerDemand()
+                    {
+                        Player = PlayerList[i],
+                        NewAttributes = newAttribute,
+                        CombatSkill = maxCombatSkill,
+                        AttackingEntity = attackingEntity
+                    });
                 }
             }
-            if (playerWantsHere.Count(b => b) == 1)
+            PlayerDemand successfulDemand = null;
+            if (playerWantsHere.Count > 0)
             {
-                var entity = new Entity()
+                foreach (var playerDemand in playerWantsHere)
                 {
-                    EntityAttributes = newAttribute,
-                    Owner = PlayerList[playerWantsHere.IndexOf(true)]
-                };
-                newGameMap.Tiles[j][k].Entity = entity;
-                entity.Owner.Score++;
+                    if (successfulDemand == null || successfulDemand.CombatSkill < playerDemand.CombatSkill)
+                        successfulDemand = playerDemand;
+                }
             }
-        }
 
-        private void HandleAliveTile(IEnumerable<Tile> neighbours, Tile tile, Tile newTile)
-        {
-            var count = neighbours.Count(t => t.IsAlive && t.Entity.Owner == tile.Entity.Owner);
-            if (CanSurvive(tile, count))
+
+            if(currentTile.IsAlive && CanSurvive(currentTile, enumerable.Count(t => t.IsAlive && t.Entity.Owner == currentTile.Entity.Owner)))
             {
-                newTile.Entity = tile.Entity;
+                var defendingSkill = CalculateHeatResistance(currentTile.Entity, currentTile);
+                if (successfulDemand == null || successfulDemand.CombatSkill < defendingSkill || successfulDemand.Player == currentTile.Entity.Ow)
+                {
+                    newGameMap.Tiles[j][k].Entity = currentTile.Entity;
+                    return;
+                }
             }
+            if (successfulDemand == null) return;
+
+            var entity = new Entity()
+            {
+                EntityAttributes = successfulDemand.NewAttributes,
+                Owner = successfulDemand.Player,
+                Efficiency = successfulDemand.AttackingEntity.Efficiency,
+                IdealTemperature = successfulDemand.AttackingEntity.IdealTemperature,
+                Resitance = successfulDemand.AttackingEntity.Resitance
+            };
+            newGameMap.Tiles[j][k].Entity = entity;
+            entity.Owner.Score++;
+
         }
 
         private static bool CanSurvive(Tile tile, int numberAlliedNeighbour)
@@ -222,10 +263,16 @@ namespace GameOfLife.Backend
                     {
                         _clearTiles.Add(coordinate);
                     }
+                    var temperature = PlayerList.Count == 1 ? 30 : 0;
+                    var efficiency = 10;
+                    var resistance = 0.7d;
                     GameMap.Tiles[coordinate.X][coordinate.Y].Entity = new Entity()
                     {
                         Owner = configuration.Player,
-                        EntityAttributes = configuration.StartAttributes
+                        EntityAttributes = configuration.StartAttributes,
+                        IdealTemperature = temperature,
+                        Efficiency = efficiency,
+                        Resitance = resistance
                     };
                 }
             }
@@ -299,9 +346,9 @@ namespace GameOfLife.Backend
             return result;
         }
 
-        private double CalculateTemperature(int x, int y)
+        private double CalculateTemperature(int x, int y, IEnumerable<HotSpot> hotSpots)
         {
-            return _hotSpots.Select(h => CalculateTemperatureForHotSpot(x, y, h)).Select(v => v - Temperature.MedianTemperature).Where(v => Math.Abs(v) > 0.1).ToList().Sum() + Temperature.MedianTemperature;
+            return hotSpots.Select(h => CalculateTemperatureForHotSpot(x, y, h)).Select(v => v - Temperature.MedianTemperature).Where(v => Math.Abs(v) > 0.1).ToList().Sum() + Temperature.MedianTemperature;
         }
 
         private double CalculateTemperatureForHotSpot(int x, int y, HotSpot spot)
