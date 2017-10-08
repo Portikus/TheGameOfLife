@@ -297,27 +297,34 @@ namespace GameOfLife.Backend
             return result;
         }
 
-
         private double CalculateTemperature(int x, int y)
         {
             return _hotSpots.Select(h => CalculateTemperatureForHotSpot(x, y, h)).Select(v => v - Temperature.MedianTemperature).Where(v => Math.Abs(v) > 0.1).ToList().Sum() + Temperature.MedianTemperature;
         }
-        
+
         private double CalculateTemperatureForHotSpot(int x, int y, HotSpot spot)
         {
             if (spot.Temperature > 0)
             {
                 return Clamp(spot.Temperature - spot.FalloffStep *
-                                                 CalculatePytagoras(spot.X - x, spot.Y - y), Temperature.MedianTemperature,
-                    Temperature.MaxTemperature);
+                             CalculatePytagoras(SpecialDistanceClampToNumberSpaceAwesomeness(spot.X - x, GameMap.Tiles.Length / 2), SpecialDistanceClampToNumberSpaceAwesomeness(spot.Y - y, GameMap.Tiles[0].Length / 2)),
+                    Temperature.MedianTemperature, Temperature.MaxTemperature);
 
             }
             else
             {
                 return Clamp(spot.Temperature + spot.FalloffStep *
-                                                 CalculatePytagoras(spot.X - x, spot.Y - y) ,
-                    Temperature.MinTemperature,Temperature.MedianTemperature);
+                             CalculatePytagoras(SpecialDistanceClampToNumberSpaceAwesomeness(spot.X - x, GameMap.Tiles.Length / 2), SpecialDistanceClampToNumberSpaceAwesomeness(spot.Y - y, GameMap.Tiles[0].Length / 2)),
+                    Temperature.MinTemperature, Temperature.MedianTemperature);
             }
+        }
+
+        private double SpecialDistanceClampToNumberSpaceAwesomeness(double value, double max)
+        {
+            value = Math.Abs(value);
+            if (value < max) return value;
+
+            return max - (value - max);
         }
 
         private double Clamp(double value, double min, double max)
@@ -325,7 +332,7 @@ namespace GameOfLife.Backend
             return value > min ? value < max ? value : max : min;
         }
 
-        private double CalculatePytagoras(int x, int y)
+        private double CalculatePytagoras(double x, double y)
         {
             return Math.Sqrt(x * x + y * y);
         }
@@ -338,14 +345,14 @@ namespace GameOfLife.Backend
             public double FalloffStep { get; set; }
         }
 
-        private double CalculateHeatResistance(Tile tile)
+        private double CalculateHeatResistance(Entity entity, Tile target)
         {
-            if (!tile.IsAlive) throw new ArgumentException();
-            if (tile.Temperature.Value <= tile.Entity.IdealTemperature)
+            if (target.Temperature.Value <= entity.IdealTemperature)
                 return Clamp(
-                    tile.Entity.Resitance * (tile.Temperature.Value - tile.Entity.IdealTemperature) +
-                    tile.Entity.Efficiency, 0, tile.Entity.Efficiency);
-            return 0;//Clamp(-tile.Entity.tile.Entity.IdealTemperature)
+                    entity.Resitance * (target.Temperature.Value - entity.IdealTemperature) +
+                    entity.Efficiency, 0, entity.Efficiency);
+            return Clamp(-entity.Resitance * (target.Temperature.Value - entity.IdealTemperature) +
+                         entity.Efficiency, 0, entity.Efficiency);
         }
 
         protected virtual void RaiseGameFinishedEvent(GameFinishedEventArgs e)
