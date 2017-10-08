@@ -99,13 +99,7 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
         {
             _playerProvider.CurrentPlayer = _playerProvider.Players.First(x => x.Name == PlayerName);
             _gameManager.GenerateGameMap(GameConfiguration);
-            AddPlayer();
             _eventAggregator.GetEvent<GameStartedEvent>().Publish();
-        }
-
-        private void AddPlayer()
-        {
-            _playerProvider.Players.AddRange(Players);
         }
 
         public static string GetLocalIpAddress()
