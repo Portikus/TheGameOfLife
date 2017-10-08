@@ -253,7 +253,7 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
         {
             try
             {
-                var receiverUdpClient = new UdpClient(100001);
+                var receiverUdpClient = new UdpClient(10001);
                 while (!GameManager.Started)
                 {
                     var data = await receiverUdpClient.ReceiveAsync();
