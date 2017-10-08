@@ -138,6 +138,25 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
             try
             {
                 var senderUdpClient = new UdpClient();
+                while (PlayerProvider.PlayerConfigurations.Any(x => x.Player.Name == PlayerProvider.CurrentPlayer.Name) == false)
+                {
+                    await Task.Delay(1000);
+                }
+                var playerConfiguration = PlayerProvider.PlayerConfigurations.First(x => x.Player.Name == PlayerProvider.CurrentPlayer.Name);
+                var xmlSerializer1 = new XmlSerializer(playerConfiguration.GetType());
+
+                using (var textWriter = new StringWriter())
+                {
+                    xmlSerializer1.Serialize(textWriter, playerConfiguration);
+                    var txt = textWriter.ToString();
+                    var toBytes = Encoding.UTF8.GetBytes(txt);
+                    await senderUdpClient.SendAsync(toBytes, toBytes.Length, new IPEndPoint(PlayerProvider.Players.First(x => x.IsHost).IpAddress, 10001));
+                }
+                while (!GameManager.Started)
+                {
+                    await Task.Delay(1000);
+                }
+
                 while (GameManager.Started)
                 {
                     await Task.Delay(1000);
