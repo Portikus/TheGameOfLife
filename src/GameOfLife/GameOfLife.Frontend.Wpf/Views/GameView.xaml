@@ -6,11 +6,16 @@
     xmlns:local="clr-namespace:GameOfLife.Frontend.Wpf.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:GameOfLife.Frontend.Wpf.ViewModels"
+    xmlns:wpf="clr-namespace:GameOfLife.Frontend.Wpf"
     d:DataContext="{d:DesignInstance viewModels:GameViewModel}"
     d:DesignHeight="300"
     d:DesignWidth="300"
     mc:Ignorable="d">
+    <UserControl.Resources>
+        <wpf:StringToColorConverter x:Key="StringToColorConverter" />
+    </UserControl.Resources>
     <DockPanel>
+        <Label Content="{Binding Status}" DockPanel.Dock="Bottom" />
         <Grid
             Width="150"
             Margin="10"
@@ -27,17 +32,18 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Top"
                 Content="{Binding PlayerProvider.CurrentPlayer.Name}"
-                FontSize="20" />
+                FontSize="20"
+                Foreground="{Binding PlayerProvider.CurrentPlayer.Name, Converter={StaticResource StringToColorConverter}}" />
         </Grid>
         <DockPanel>
             <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
                 <Label
                     Margin="5"
-                    Content="Round:"
+                    Content="Started?:"
                     FontSize="15" />
                 <Label
                     Margin="5"
-                    Content="{Binding GameManager.Round}"
+                    Content="{Binding GameManager.Started}"
                     FontSize="15" />
                 <Label
                     Margin="5"

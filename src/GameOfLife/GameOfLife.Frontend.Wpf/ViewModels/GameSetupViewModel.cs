@@ -6,7 +6,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Xml.Serialization;
 using GameOfLife.Api;
@@ -28,6 +27,8 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
         private readonly UdpClient _receiverUdpClient;
         private readonly UdpClient _senderUdpClient;
         private readonly DelegateCommand _startGameCommand;
+        private readonly DelegateCommand _startHeartbeatsCommand;
+        private bool _nameNotSet;
         private string _status;
         public bool IsHost { get; set; }
 
@@ -43,28 +44,44 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
 
         public string PlayerName { get; set; }
 
+        public bool NameNotSet
+        {
+            get => _nameNotSet;
+            set
+            {
+                _nameNotSet = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public ObservableCollection<Player> Players { get; set; }
         public GameConfiguration GameConfiguration { get; set; }
         public ICommand StartGameCommand => _startGameCommand;
         public ICommand AddPlayerCommand => _addPlayerCommand;
+        public ICommand StartHeartbeatsCommand => _startHeartbeatsCommand;
 
         public GameSetupViewModel(IGameManager gameManager, IEventAggregator eventAggregator, PlayerProvider playerProvider)
         {
-            Players = new ObservableCollection<Player>();
-            BindingOperations.EnableCollectionSynchronization(Players, this);
+            NameNotSet = true;
+            Players = playerProvider.Players;
             _eventAggregator = eventAggregator;
             _playerProvider = playerProvider;
             _gameManager = gameManager ?? throw new ArgumentNullException(nameof(gameManager));
 
             _receiverUdpClient = new UdpClient(new IPEndPoint(IPAddress.Parse(GetLocalIpAddress()), 10000));
             _senderUdpClient = new UdpClient();
-            Task.Run(ReceiveHeartBeatsAsync);
-            Task.Run(SendHeartBeats);
 
             GameConfiguration = new GameConfiguration {MapHeight = 100, MapWidth = 100, GenerationsPerRound = 1};
 
             _startGameCommand = new DelegateCommand(StartGameCommandExecuteMethod, StartGameCommandCanExecuteMethod);
             _addPlayerCommand = new DelegateCommand(AddNewPlayerCommandExecute);
+            _startHeartbeatsCommand = new DelegateCommand(() =>
+            {
+                NameNotSet = false;
+                _startHeartbeatsCommand.RaiseCanExecuteChanged();
+                Task.Run(ReceiveHeartBeatsAsync);
+                Task.Run(SendHeartBeats);
+            }, () => NameNotSet);
         }
 
         private void AddNewPlayerCommandExecute()
@@ -80,14 +97,9 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
 
         private void StartGameCommandExecuteMethod()
         {
+            _playerProvider.CurrentPlayer = _playerProvider.Players.First(x => x.Name == PlayerName);
             _gameManager.GenerateGameMap(GameConfiguration);
-            AddPlayer();
             _eventAggregator.GetEvent<GameStartedEvent>().Publish();
-        }
-
-        private void AddPlayer()
-        {
-            _playerProvider.Players.AddRange(Players);
         }
 
         public static string GetLocalIpAddress()
@@ -107,7 +119,7 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
         {
             try
             {
-                while (true)
+                while (!_gameManager.Started)
                 {
                     await Task.Delay(1000);
                     if (string.IsNullOrEmpty(PlayerName))
@@ -122,9 +134,12 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                         xmlSerializer.Serialize(textWriter, heartBeat);
                         var txt = textWriter.ToString();
                         var toBytes = Encoding.UTF8.GetBytes(txt);
+                        var localAddress = IPAddress.Parse(GetLocalIpAddress()).GetAddressBytes();
+
                         for (byte i = 1; i < 255; i++)
                         {
-                            await _senderUdpClient.SendAsync(toBytes, toBytes.Length, new IPEndPoint(new IPAddress(new byte[] {192, 168, 80, i}), 10000));
+                            var ipAddress = new IPAddress(new[]{ localAddress[0], localAddress[1], localAddress[2], i });
+                            await _senderUdpClient.SendAsync(toBytes, toBytes.Length, new IPEndPoint(ipAddress, 10000));
                         }
                     }
                 }
@@ -139,7 +154,7 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
         {
             try
             {
-                while (true)
+                while (!_gameManager.Started)
                 {
                     var data = await _receiverUdpClient.ReceiveAsync();
                     var str = Encoding.UTF8.GetString(data.Buffer);
@@ -156,7 +171,7 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                     }
                     if (Players.Any(x => x.Name == result.PlayerName) == false)
                     {
-                        Players.Add(new Player {Name = result.PlayerName});
+                        Players.Add(new Player {Name = result.PlayerName, IpAddress = data.RemoteEndPoint.Address});
                         _startGameCommand.RaiseCanExecuteChanged();
                     }
                 }
