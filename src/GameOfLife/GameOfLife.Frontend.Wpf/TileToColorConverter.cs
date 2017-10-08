@@ -11,8 +11,7 @@ namespace GameOfLife.Frontend.Wpf
     {
         public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
         {
-            var entity = value.FirstOrDefault(x => x is Entity) as Entity;
-            if (entity != null)
+            if (value.FirstOrDefault(x => x is Entity) is Entity entity)
             {
                 return GetPlayerColor(entity);
             }
@@ -49,12 +48,7 @@ namespace GameOfLife.Frontend.Wpf
 
         private object GetPlayerColor(Entity entity)
         {
-            var name = entity.Owner.Name;
-            var hash = name.GetHashCode() + name.GetHashCode().ToString();
-            var r = (byte) int.Parse(hash.Substring(0, 2));
-            var g = (byte) int.Parse(hash.Substring(2, 4));
-            var b = (byte) int.Parse(hash.Substring(4, 6));
-            return new SolidColorBrush(new Color {R = r, G = g, B = b, A = byte.MaxValue});
+            return ColorConversionHelper.CalculatePlayerBrush(entity.Owner.Name);
         }
     }
 }
