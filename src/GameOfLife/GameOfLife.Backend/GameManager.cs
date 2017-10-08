@@ -68,7 +68,7 @@ namespace GameOfLife.Backend
 
         public GameMap GenerateGameMap(GameConfiguration gameConfiguration)
         {
-            //_random = new Random(gameConfiguration.Seed);
+            _random = new Random(gameConfiguration.Seed);
             _gameMapDiagonal = CalculatePytagoras(gameConfiguration.MapWidth, gameConfiguration.MapHeight);
             _hotSpots = GenerateHotSpots(gameConfiguration.MapWidth, gameConfiguration.MapHeight);
             GameMap = new GameMap { Tiles = new Tile[gameConfiguration.MapWidth][] };
