@@ -142,12 +142,14 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                 {
                     await Task.Delay(1000);
                 }
+                var provider = new PlayerConfigurationsProvider();
                 var playerConfiguration = PlayerProvider.PlayerConfigurations.First(x => x.Player.Name == PlayerProvider.CurrentPlayer.Name);
-                var xmlSerializer1 = new XmlSerializer(playerConfiguration.GetType());
+                provider.PlayerConfiguration.Add(playerConfiguration);
+                var xmlSerializer1 = new XmlSerializer(provider.GetType());
 
                 using (var textWriter = new StringWriter())
                 {
-                    xmlSerializer1.Serialize(textWriter, playerConfiguration);
+                    xmlSerializer1.Serialize(textWriter, provider);
                     var txt = textWriter.ToString();
                     var toBytes = Encoding.UTF8.GetBytes(txt);
                     await senderUdpClient.SendAsync(toBytes, toBytes.Length, new IPEndPoint(PlayerProvider.Players.First(x => x.IsHost).IpAddress, 10001));
@@ -270,18 +272,18 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                 {
                     var data = await receiverUdpClient.ReceiveAsync();
                     var str = Encoding.UTF8.GetString(data.Buffer);
-                    var serializer = new XmlSerializer(typeof(PlayerConfiguration));
-                    PlayerConfiguration result;
+                    var serializer = new XmlSerializer(typeof(PlayerConfigurationsProvider));
+                    PlayerConfigurationsProvider result;
                     using (TextReader reader = new StringReader(str))
                     {
-                        result = serializer.Deserialize(reader) as PlayerConfiguration;
+                        result = serializer.Deserialize(reader) as PlayerConfigurationsProvider;
                     }
                     if (result == null)
                     {
                         Status = "Fehler";
                         continue;
                     }
-                    PlayerProvider.PlayerConfigurations.Add(result);
+                    PlayerProvider.PlayerConfigurations.AddRange(result.PlayerConfiguration);
 
                     if (PlayerProvider.Players.Count != PlayerProvider.PlayerConfigurations.Count)
                     {
@@ -327,6 +329,12 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
         public class PlayerConfigurationsProvider
         {
             public List<PlayerConfiguration> PlayerConfiguration { get; set; }
+
+            public PlayerConfigurationsProvider()
+            {
+                PlayerConfiguration  = new List<PlayerConfiguration>();
+
+            }
         }
     }
 }
