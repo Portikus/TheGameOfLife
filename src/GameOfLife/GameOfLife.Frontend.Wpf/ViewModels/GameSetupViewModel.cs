@@ -27,8 +27,8 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
         private readonly UdpClient _receiverUdpClient;
         private readonly UdpClient _senderUdpClient;
         private readonly DelegateCommand _startGameCommand;
-        private bool _nameNotSet;
         private readonly DelegateCommand _startHeartbeatsCommand;
+        private bool _nameNotSet;
         private string _status;
         public bool IsHost { get; set; }
 
@@ -140,9 +140,12 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                         xmlSerializer.Serialize(textWriter, heartBeat);
                         var txt = textWriter.ToString();
                         var toBytes = Encoding.UTF8.GetBytes(txt);
+                        var localAddress = IPAddress.Parse(GetLocalIpAddress()).GetAddressBytes();
+
                         for (byte i = 1; i < 255; i++)
                         {
-                            await _senderUdpClient.SendAsync(toBytes, toBytes.Length, new IPEndPoint(new IPAddress(new byte[] {192, 168, 80, i}), 10000));
+                            var ipAddress = new IPAddress(new[]{ localAddress[0], localAddress[1], localAddress[2], i });
+                            await _senderUdpClient.SendAsync(toBytes, toBytes.Length, new IPEndPoint(ipAddress, 10000));
                         }
                     }
                 }
