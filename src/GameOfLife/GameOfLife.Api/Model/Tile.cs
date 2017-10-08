@@ -8,6 +8,9 @@
 
         public bool DebugHighlight { get; set; }
 
+        public int X { get; set; }
+        public int Y { get; set; }
+
         public Entity Entity
         {
             get => _entity;

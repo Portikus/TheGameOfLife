@@ -77,7 +77,7 @@ namespace GameOfLife.Backend
                 GameMap.Tiles[i] = new Tile[gameConfiguration.MapHeight];
                 for (int j = 0; j < GameMap.Tiles[i].Length; j++)
                 {
-                    GameMap.Tiles[i][j] = new Tile();
+                    GameMap.Tiles[i][j] = new Tile(){X=i,Y=j};
                     GameMap.Tiles[i][j].Temperature.Value = CalculateTemperature(i, j, _hotSpots);
                 }
             }
@@ -98,10 +98,18 @@ namespace GameOfLife.Backend
                 var newHotSpots = new List<HotSpot>();
                 foreach (var playerAction in playerActions)
                 {
-                    /*foreach (var temp in playerAction.TemperatureChange)
+                    foreach (var temp in playerAction.TemperatureManipulations)
                     {
-                        newHotSpots.Add(Something);
-                    }*/
+                        var hotSpot = new HotSpot
+                        {
+                            X = temp.Tile.X,
+                            Y = temp.Tile.Y,
+                            Temperature = (int) (10.0 * Math.Max(temp.Change / 10.0, 1.0)) +
+                                          Temperature.MedianTemperature,
+                            FalloffStep = 1.5d
+                        };
+                        newHotSpots.Add(hotSpot);
+                    }
                 }
 
 
