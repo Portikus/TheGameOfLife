@@ -280,9 +280,17 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
                         Status = "Fehler";
                         continue;
                     }
+                    foreach (var config in result.PlayerConfiguration)
+                    {
+                        if (PlayerProvider.PlayerConfigurations.Any(x=>x.Player.Name == config.Player.Name))
+                        {
+                            continue;
+                        }
+                        PlayerProvider.PlayerConfigurations.Add(config);
+                    }
                     PlayerProvider.PlayerConfigurations.AddRange(result.PlayerConfiguration);
 
-                    if (PlayerProvider.Players.Count != PlayerProvider.PlayerConfigurations.Count)
+                    if (PlayerProvider.Players.Count == PlayerProvider.PlayerConfigurations.Count)
                     {
                         if (PlayerProvider.CurrentPlayer.IsHost == false)
                         {
