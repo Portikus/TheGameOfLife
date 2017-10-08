@@ -33,7 +33,8 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
         {
             if (_gameManager.Started)
             {
-                tile.Temperature.Value += tile.Temperature.Step;
+                var temperatureManipulation = new TemperatureManipulation {Tile = tile, Change = 1};
+                _playerProvider.PlayerAction.TemperatureManipulations.Add(temperatureManipulation);
             }
             else
             {

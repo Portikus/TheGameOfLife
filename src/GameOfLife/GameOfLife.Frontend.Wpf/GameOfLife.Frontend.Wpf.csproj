@@ -80,9 +80,11 @@
     </Compile>
     <Compile Include="BoolToVisibleConverter.cs" />
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="ColorConversionHelper.cs" />
     <Compile Include="Mocks\GameManagerMock.cs" />
     <Compile Include="Model\PlayerProvider.cs" />
     <Compile Include="NeighborConverter.cs" />
+    <Compile Include="StringToColorConverter.cs" />
     <Compile Include="TestConverter.cs" />
     <Compile Include="TileToColorConverter.cs" />
     <Compile Include="ViewModels\GameMapViewModel.cs" />

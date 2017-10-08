@@ -124,7 +124,7 @@ namespace GameOfLife.Frontend.Wpf.ViewModels
         {
             lock (this)
             {
-                _myPlayerActions.Add(new PlayerAction {Player = PlayerProvider.CurrentPlayer});
+                _myPlayerActions.Add(PlayerProvider.PlayerAction);
             }
         }
 
